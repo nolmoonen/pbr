@@ -5,6 +5,8 @@
 #include "manager.hpp"
 
 #define MESH_SKYBOX 0
+#define MESH_CUBE 1
+#define MESH_SPHERE 2
 
 class MeshManager : public Manager<Mesh> {
 private:

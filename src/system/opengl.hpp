@@ -81,13 +81,18 @@ struct Mesh {
 
     /**
      * Helper function for {create_mesh}.
-     * Creates a cube of size 2x2x2 centered at (0,0,0). */
+     * Creates a cubemapped cube of size 2x2x2 centered at (0,0,0). */
     static void create_cube(Mesh *mesh);
 
     /**
-     * Helper function for {create_mesh}. Creates a cubemap of size 2x2x2 centered at (0,0,0).
+     * Helper function for {create_mesh}. Creates a cubemapped cube of size 2x2x2 centered at (0,0,0).
      * Differs from {create_cube} in the sense that it is intended to be viewed from the inside. */
     static void create_skybox(Mesh *mesh);
+
+    /**
+     * Creates a textured unit sphere centered at (0,0,0).
+     * http://www.songho.ca/opengl/gl_sphere.html */
+    static void create_sphere(Mesh *mesh);
 };
 
 // todo could get superclass RenderObject or something?
@@ -162,7 +167,7 @@ struct Texture {
 
     static int create_tex_from_mem(
             Texture *tex, const char *tex_data, size_t tex_len, GLenum texture_unit,
-            uint32_t channel_count
+            uint32_t channel_count, uint32_t bit_depth
     );
 
     static void bind_tex(Texture *tex);

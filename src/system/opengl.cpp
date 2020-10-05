@@ -223,11 +223,11 @@ void Mesh::create_cube(Mesh *mesh)
 {
     const float SIZE = 1.f;
 
-    uint32_t vertex_count = 6 * 4; // every side four, due to normals and tex coordinates
+    const uint32_t vertex_count = 6 * 4; // every side four, due to normals and tex coordinates
     glm::vec3 geom_vertices[vertex_count];
     glm::vec2 tex_vertices[vertex_count];
     glm::vec3 norm_vertices[vertex_count];
-    uint32_t index_count = 6 * 6; // each side two triangles
+    const uint32_t index_count = 6 * 6; // each side two triangles
     GLushort indices[index_count];
 
     // todo the z-axis in this picture is wrong
@@ -422,11 +422,11 @@ void Mesh::create_skybox(Mesh *mesh)
     // NB: basically {create_cube} with different texture coordinates and differently ordered indices
     const float SIZE = 1.f;
 
-    uint32_t vertex_count = 6 * 4;
+    const uint32_t vertex_count = 6 * 4;
     glm::vec3 geom_vertices[vertex_count];
     glm::vec2 tex_vertices[vertex_count];
     glm::vec3 norm_vertices[vertex_count];
-    uint32_t index_count = 6 * 6;
+    const uint32_t index_count = 6 * 6;
     GLushort indices[index_count];
 
     const glm::vec3 V0 = glm::vec3(-SIZE, -SIZE, -SIZE);
@@ -579,6 +579,83 @@ void Mesh::create_skybox(Mesh *mesh)
             geom_vertices, tex_vertices, norm_vertices, vertex_count,
             indices, index_count
     );
+}
+
+void Mesh::create_sphere(Mesh *mesh)
+{
+    const uint32_t STACK_COUNT = 64;
+    const uint32_t SECTOR_COUNT = 64;
+
+    /** create vertices */
+
+    const uint32_t VERTEX_COUNT = (STACK_COUNT + 1) * (SECTOR_COUNT + 1);
+    glm::vec3 geom_vertices[VERTEX_COUNT];
+    glm::vec2 tex_vertices[VERTEX_COUNT];
+    glm::vec3 norm_vertices[VERTEX_COUNT];
+
+    const float STACK_STEP = M_PI / (float) STACK_COUNT;
+    const float SECTOR_STEP = (2.f * (float) M_PI) / (float) SECTOR_COUNT;
+
+    uint32_t vertex = 0; // vertex index
+    for (uint32_t i = 0; i < STACK_COUNT + 1; i++) {
+        float stack_angle = (float) M_PI_2 - (float) i * STACK_STEP; // u from pi / 2 to -pi / 2
+        float xz = cosf(stack_angle);                                // cos(u)
+        float y = sinf(stack_angle);                                 // sin(u)
+
+        // add (sectorCount+1) vertices per stack
+        // the first and last vertices have same position and normal, but different tex coords
+        for (uint32_t j = 0; j < SECTOR_COUNT + 1; j++) {
+            float sector_angle = (float) j * SECTOR_STEP;            // v from 0 to 2 * pi
+
+            // vertex position (x, y, z)
+            float x = xz * cosf(sector_angle);                       // cos(u) * cos(v)
+            float z = xz * sinf(sector_angle);                       // cos(u) * sin(v)
+            geom_vertices[vertex] = glm::vec3(x, y, z);
+
+            // normalized vertex normal (nx, ny, nz)
+            norm_vertices[vertex] = glm::vec3(x, y, z);
+
+            // vertex tex coord (s, t) range between [0, 1]
+            float s = 1.f - (float) j / (float) SECTOR_COUNT;
+            float t = 1.f - (float) i / (float) STACK_COUNT;
+            tex_vertices[vertex] = glm::vec2(s, t);
+
+            vertex++;
+        }
+    }
+
+    /** create indices */
+
+    const uint32_t INDEX_COUNT = STACK_COUNT * (SECTOR_COUNT - 2) * 6;
+    GLushort indices[INDEX_COUNT];
+
+    uint32_t index = 0; // index index
+    for (uint32_t i = 0; i < STACK_COUNT; i++) {
+        uint32_t k1 = i * (SECTOR_COUNT + 1); // beginning of current stack
+        uint32_t k2 = k1 + SECTOR_COUNT + 1;  // beginning of next stack
+
+        for (uint32_t j = 0; j < SECTOR_COUNT; j++) {
+            // 2 triangles per sector excluding first and last stacks
+            // k1 => k1+1 => k2
+            if (i != 0) {
+                indices[index++] = k1;
+                indices[index++] = k1 + 1;
+                indices[index++] = k2;
+            }
+
+            // k1+1 => k2 + 1 => k2
+            if (i != (STACK_COUNT - 1)) {
+                indices[index++] = k1 + 1;
+                indices[index++] = k2 + 1;
+                indices[index++] = k2;
+            }
+
+            k1++;
+            k2++;
+        }
+    }
+
+    create_mesh(mesh, geom_vertices, tex_vertices, norm_vertices, VERTEX_COUNT, indices, INDEX_COUNT);
 }
 
 void InstancedMesh::create_instanced_mesh(
@@ -744,7 +821,7 @@ void Lines::create_line(Lines *line, glm::vec3 dir, glm::vec3 color)
     );
 }
 
-// todo merge better with {create_tex_from_mem}
+// todo merge better with {create_tex_from_mem} and also deprecated
 int Texture::create_tex_from_file(Texture *tex, const char *tex_file, GLenum texture_unit)
 {
     glGenTextures(1, &tex->m_tex_id);
@@ -790,7 +867,7 @@ int Texture::create_tex_from_file(Texture *tex, const char *tex_file, GLenum tex
 
 int Texture::create_tex_from_mem(
         Texture *tex, const char *tex_data, size_t tex_len, GLenum texture_unit,
-        uint32_t channel_count
+        uint32_t channel_count, uint32_t bit_depth
 )
 {
     glGenTextures(1, &tex->m_tex_id);
@@ -807,25 +884,30 @@ int Texture::create_tex_from_mem(
 
     // load and generate the texture
     int width, height, channel_count_;
-    // NB: first pixel is top-left corner
-    unsigned char *data = stbi_load_from_memory(
-            (const unsigned char *) tex_data,
-            tex_len, &width, &height, &channel_count_, channel_count
-    );
-
-    // flip data vertically
-    for (uint32_t y = 0; y < height / 2; y++) {
-        uint32_t y_ = height - y - 1;
-        for (uint32_t x = 0; x < width; x++) {
-            for (uint32_t c = 0; c < channel_count; c++) {
-                uint8_t tmp = data[y * width * channel_count + x * channel_count + c];
-                data[y * width * channel_count + x * channel_count + c] =
-                        data[y_ * width * channel_count + x * channel_count + c];
-                data[y_ * width * channel_count + x * channel_count + c] = tmp;
-            }
-        }
+    // NB: first pixel is top-left corner, flip it with this call
+    stbi_set_flip_vertically_on_load(1);
+    void *data;
+    if (bit_depth == 8) {
+        // unsigned char *
+        default_depth:
+        data = stbi_load_from_memory(
+                (const unsigned char *) tex_data, tex_len, &width, &height, &channel_count_, channel_count);
+    } else if (bit_depth == 16) {
+        // unsigned short *
+        data = stbi_load_16_from_memory(
+                (const unsigned char *) tex_data, tex_len, &width, &height, &channel_count_, channel_count);
+    } else {
+        nm_log::log(LOG_WARN, "no stbi function found for specified bit depth, guessing 8 bit depth\n");
+        goto default_depth;
     }
 
+
+    if (channel_count_ != (int) channel_count) {
+        nm_log::log(LOG_WARN, "specified channel count not equal to found channel count\n");
+    }
+
+    // keep on moving forward with assumed channel count since this is the size of the buffer
+    // since stbi may complain but will always allocate the number of channels the user specifies
     if (data) {
         GLenum format;
         if (channel_count == 3) {
@@ -837,8 +919,28 @@ int Texture::create_tex_from_mem(
             format = GL_RGBA;
         }
 
+        GLenum type;
+        if (bit_depth == 8) {
+            type = GL_UNSIGNED_BYTE;
+        } else if (bit_depth == 16) {
+            type = GL_UNSIGNED_SHORT;
+        } else {
+            nm_log::log(LOG_WARN, "unknown texture type, guessing GL_UNSIGNED_BYTE\n");
+            type = GL_UNSIGNED_BYTE;
+        }
+
         // NB: first pixel is lower-left corner
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+        GLenum internal_format;
+        if (format == GL_RGB || format == GL_RGB16_SNORM) {
+            internal_format = GL_RGB;
+        } else if (format == GL_RGBA || format == GL_RGBA16) {
+            internal_format = GL_RGBA;
+        } else {
+            nm_log::log(LOG_WARN, "internal format not specified, guessing GL_RGBA\n");
+            internal_format = GL_RGBA;
+        }
+
+        glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, GL_RGBA, type, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
         nm_log::log(LOG_ERROR, "failed to load texture\n");

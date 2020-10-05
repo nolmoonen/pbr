@@ -32,8 +32,8 @@ void Renderer::render()
     ShaderProgram::set_mat4(prog, "modelMatrix", glm::identity<glm::mat4>());
     ShaderProgram::set_mat4(prog, "viewMatrix", camera->get_view_matrix());
     ShaderProgram::set_mat4(prog, "projectionMatrix", camera->get_proj_matrix());
-    Texture::bind_tex(texture_manager->get(TEXTURE_TEST));
-    Mesh::render_mesh(mesh_manager->get(MESH_SKYBOX));
+    Texture::bind_tex(texture_manager->get(TEXTURE_BRICK_DIFF));
+    Mesh::render_mesh(mesh_manager->get(MESH_SPHERE));
     Texture::unbind_tex();
     ShaderProgram::unuse_shader_program();
 }

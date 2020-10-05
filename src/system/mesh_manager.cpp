@@ -5,7 +5,9 @@ template<>
 inline Manager<Mesh>::~Manager<Mesh>() = default;
 
 const MeshManager::MeshResource MeshManager::MESH_RESOURCES[] = {
-        {.id=MESH_SKYBOX, .create_function=&Mesh::create_skybox},
+        {MESH_SKYBOX, &Mesh::create_skybox},
+        {MESH_CUBE, &Mesh::create_cube},
+        {MESH_SPHERE, &Mesh::create_sphere},
 };
 
 int32_t MeshManager::create_item(Mesh *item, uint32_t id)

@@ -26,12 +26,22 @@ void Renderer::render()
         ShaderProgram::unuse_shader_program();
     }
 
-    // draw skybox
-    ShaderProgram *prog = shader_manager->get(SHADER_DEFAULT); // NB: no shading!
-    ShaderProgram::use_shader_program(prog);
-    ShaderProgram::set_mat4(prog, "modelMatrix", glm::identity<glm::mat4>());
-    ShaderProgram::set_mat4(prog, "viewMatrix", camera->get_view_matrix());
-    ShaderProgram::set_mat4(prog, "projectionMatrix", camera->get_proj_matrix());
+    // draw sphere
+    ShaderProgram *program = shader_manager->get(SHADER_PBR);
+    ShaderProgram::use_shader_program(program);
+    ShaderProgram::set_mat4(program, "modelMatrix", glm::identity<glm::mat4>());
+    ShaderProgram::set_mat4(program, "viewMatrix", camera->get_view_matrix());
+    ShaderProgram::set_mat4(program, "projectionMatrix", camera->get_proj_matrix());
+
+    ShaderProgram::set_vec3(program, "pos_light", glm::vec3(1.f, 1.f, 1.f));
+    ShaderProgram::set_vec3(program, "pos_camera", camera->get_camera_position());
+    ShaderProgram::set_vec3(program, "color_light", glm::vec3(1.f, 1.f, 1.f));
+
+    ShaderProgram::set_vec3(program, "albedo", glm::vec3(1.f, 0.f, 0.f));
+    ShaderProgram::set_float(program, "metallic", .5f);
+    ShaderProgram::set_float(program, "roughness", .5f);
+    ShaderProgram::set_float(program, "ao", 0.f);
+
     Texture::bind_tex(texture_manager->get(TEXTURE_BRICK_DIFF));
     Mesh::render_mesh(mesh_manager->get(MESH_SPHERE));
     Texture::unbind_tex();

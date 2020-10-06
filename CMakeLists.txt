@@ -18,13 +18,16 @@ set(SOURCES
 
 # resource files
 add_subdirectory(embedder)
-embed(default_frag res/shader/default.frag)
 embed(default_vert res/shader/default.vert)
+embed(default_frag res/shader/default.frag)
 embed(instance_vert res/shader/instance.vert)
-embed(phong_frag res/shader/phong.frag)
 embed(phong_vert res/shader/phong.vert)
-embed(lines_frag res/shader/lines.frag)
+embed(phong_frag res/shader/phong.frag)
 embed(lines_vert res/shader/lines.vert)
+embed(lines_frag res/shader/lines.frag)
+embed(pbr_vert res/shader/pbr.vert)
+embed(pbr_frag res/shader/pbr.frag)
+
 embed(test_png res/tex/test.png)
 embed(brick_diff_png res/tex/castle_brick_07_1k_png/castle_brick_07_diff_1k.png)
 

@@ -34,6 +34,8 @@ struct ShaderProgram {
     static void set_vec3(ShaderProgram *shader_program, const char *name, glm::vec3 val);
 
     static void set_mat4(ShaderProgram *shader_program, const char *name, glm::mat4 val);
+
+    static void set_float(ShaderProgram *shader_program, const char *name, float val);
 };
 
 struct Shader {
@@ -67,6 +69,8 @@ struct Mesh {
      * Returns {@code EXIT_SUCCESS} on success, {@code EXIT_FAILURE} otherwise.
      * If {@code EXIT_SUCCESS} is returned, a call to {@code delete_mesh} is required
      * before the executable terminates.
+     *
+     * Shaders assume that normals are unitized!
      */
     static void create_mesh(
             Mesh *t_mesh,

@@ -8,10 +8,11 @@
 #include "manager.hpp"
 
 // todo make enum?
-#define SHADER_DEFAULT 0
+#define SHADER_DEFAULT   0
 #define SHADER_INSTANCED 1
-#define SHADER_PHONG 2
-#define SHADER_LINES 3
+#define SHADER_PHONG     2
+#define SHADER_LINES     3
+#define SHADER_PBR       4
 
 /** Specified manually based on identifiers in CMakeLists. */
 extern const char default_vert[];
@@ -29,11 +30,17 @@ extern const size_t phong_vert_len;
 extern const char phong_frag[];
 extern const size_t phong_frag_len;
 
-extern const char lines_frag[];
+extern const char lines_vert[];
 extern const size_t lines_vert_len;
 
-extern const char lines_vert[];
+extern const char lines_frag[];
 extern const size_t lines_frag_len;
+
+extern const char pbr_vert[];
+extern const size_t pbr_vert_len;
+
+extern const char pbr_frag[];
+extern const size_t pbr_frag_len;
 
 class ShaderManager : public Manager<ShaderProgram> {
 private:

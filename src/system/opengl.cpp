@@ -109,6 +109,12 @@ void ShaderProgram::set_mat4(ShaderProgram *shader_program, const char *name, gl
     glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(val));
 }
 
+void ShaderProgram::set_float(ShaderProgram *shader_program, const char *name, float val)
+{
+    GLint location = glGetUniformLocation(shader_program->m_shader_program, name);
+    glUniform1f(location, val);
+}
+
 int32_t Shader::create_shader(Shader *t_shader, const char *t_shader_text, GLint t_shader_size, bool t_is_vertex)
 {
     if (t_is_vertex) {

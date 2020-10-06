@@ -6,32 +6,39 @@ inline Manager<ShaderProgram>::~Manager<ShaderProgram>() = default;
 
 const ShaderManager::ShaderResource ShaderManager::SHADER_PROGRAM_RESOURCES[] = {
         {
-                .id=SHADER_DEFAULT,
-                .vec3_ids={},
-                .mat4_ids={"modelMatrix", "viewMatrix", "projectionMatrix"},
-                .vert_text=default_vert, .vert_len=&default_vert_len,
-                .frag_text=default_frag, .frag_len=&default_frag_len
+                SHADER_DEFAULT,
+                {},
+                {"modelMatrix", "viewMatrix", "projectionMatrix"},
+                default_vert, &default_vert_len,
+                default_frag, &default_frag_len
         },
         {
-                .id=SHADER_INSTANCED,
-                .vec3_ids={},
-                .mat4_ids={"modelMatrix", "viewMatrix", "projectionMatrix"},
-                .vert_text=instance_vert, .vert_len=&instance_vert_len,
-                .frag_text=default_frag, .frag_len=&default_frag_len
+                SHADER_INSTANCED,
+                {},
+                {"modelMatrix", "viewMatrix", "projectionMatrix"},
+                instance_vert, &instance_vert_len,
+                default_frag, &default_frag_len
         },
         {
-                .id=SHADER_PHONG,
-                .vec3_ids={"pos_light", "pos_camera", "color_light"},
-                .mat4_ids={"modelMatrix", "viewMatrix", "projectionMatrix"},
-                .vert_text=phong_vert, .vert_len=&phong_vert_len,
-                .frag_text=phong_frag, .frag_len=&phong_frag_len
+                SHADER_PHONG,
+                {"pos_light", "pos_camera", "color_light"},
+                {"modelMatrix", "viewMatrix", "projectionMatrix"},
+                phong_vert, &phong_vert_len,
+                phong_frag, &phong_frag_len
         },
         {
-                .id=SHADER_LINES,
-                .vec3_ids={},
-                .mat4_ids={"modelMatrix", "viewMatrix", "projectionMatrix"},
-                .vert_text=lines_vert, .vert_len=&lines_vert_len,
-                .frag_text=lines_frag, .frag_len=&lines_frag_len
+                SHADER_LINES,
+                {},
+                {"modelMatrix", "viewMatrix", "projectionMatrix"},
+                lines_vert, &lines_vert_len,
+                lines_frag, &lines_frag_len
+        },
+        {
+                SHADER_PBR,
+                {},
+                {"modelMatrix", "viewMatrix", "projectionMatrix"},
+                pbr_vert, &pbr_vert_len,
+                pbr_frag, &pbr_frag_len
         }
 };
 

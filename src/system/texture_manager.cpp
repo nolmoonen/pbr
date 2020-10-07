@@ -5,8 +5,9 @@ template<>
 inline Manager<Texture>::~Manager<Texture>() = default;
 
 const TextureManager::TextureResource TextureManager::TEXTURE_RESOURCES[] = {
-        {TEXTURE_TEST, 4, 8, test_png, &test_png_len},
-        {TEXTURE_BRICK_DIFF, 4, 16, brick_diff_png, &brick_diff_png_len},
+        {TEXTURE_TEST,       4, 8,  0, test_png,       &test_png_len},
+        {TEXTURE_BRICK_DIFF, 4, 16, 0, brick_diff_png, &brick_diff_png_len},
+        {TEXTURE_BRICK_NORM, 4, 16, 1, brick_norm_png, &brick_norm_png_len},
 };
 
 int32_t TextureManager::create_item(Texture *item, uint32_t id)
@@ -29,8 +30,8 @@ int32_t TextureManager::create_item(Texture *item, uint32_t id)
     if (Texture::create_tex_from_mem(
             item,
             TEXTURE_RESOURCES[prog_index].text, *TEXTURE_RESOURCES[prog_index].len,
-            GL_TEXTURE0, TEXTURE_RESOURCES[prog_index].channels,
-            TEXTURE_RESOURCES[prog_index].bit_depth
+            TEXTURE_RESOURCES[prog_index].channels, TEXTURE_RESOURCES[prog_index].bit_depth,
+            TEXTURE_RESOURCES[prog_index].texture_unit
     ) == EXIT_FAILURE) {
         nm_log::log(LOG_ERROR, "failed to create texture\n");
 

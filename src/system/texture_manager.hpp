@@ -8,6 +8,7 @@
 
 #define TEXTURE_TEST 0
 #define TEXTURE_BRICK_DIFF 1
+#define TEXTURE_BRICK_NORM 2
 
 /** Specified manually based on identifiers in CMakeLists. */
 extern const char test_png[];
@@ -16,13 +17,17 @@ extern const size_t test_png_len;
 extern const char brick_diff_png[];
 extern const size_t brick_diff_png_len;
 
+extern const char brick_norm_png[];
+extern const size_t brick_norm_png_len;
+
 class TextureManager : public Manager<Texture> {
 private:
     // todo find better solution and combine with ShaderResource?
     typedef struct {
         uint32_t id;
-        uint32_t channels;  // number of channels in the image (for example 3 if RGB)
-        uint32_t bit_depth; // number of bits per channel (8 bits is common)
+        uint32_t channels;     // number of channels in the image (for example 3 if RGB)
+        uint32_t bit_depth;    // number of bits per channel (8 bits is common)
+        uint32_t texture_unit; // to which opengl texture unit it maps
         /** Pointers to extern embedded data. */
         const char *text;
         const size_t *len;

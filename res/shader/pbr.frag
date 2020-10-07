@@ -2,20 +2,19 @@
 // use with: 'pbr.vert'
 #version 330 core
 
-uniform sampler2D tex_sampler;
+uniform sampler2D texture_diff;
+uniform sampler2D texture_norm;
 
-uniform vec3 pos_light;
-uniform vec3 pos_camera;
 uniform vec3 color_light;
 
-uniform vec3  albedo;
 uniform float metallic;
 uniform float roughness;
 uniform float ao;
 
-out vec3 geom;
 in vec2 tex;
-in vec3 normal;
+in vec3 tangent_pos_light;
+in vec3 tangent_pos_view;
+in vec3 tangent_frag_pos;
 
 out vec4 frag_color;
 
@@ -43,24 +42,31 @@ float geometry_smith(vec3 n, vec3 v, vec3 l, float roughness);
 
 void main()
 {
-    vec3 v   = normalize(pos_camera - geom); // direction from point to camera
-    vec3 l_o = vec3(0.0);                    // total outgoing radiance of this fragment
-    vec3 f_0 = vec3(0.04);                   // surface reflection at zero incidence (0.04 for dielectric)
-    f_0      = mix(f_0, albedo, metallic);   // lerp between f_0 and albedo based on metallic value
+    // convert SRGB to linear RGB
+    vec3 albedo = pow(texture(texture_diff, tex).rgb, vec3(2.2));
+
+    // obtain normal from normal map in range [0, 1], transform to [-1, 1] ({normal} is in tangent space)
+    vec3 normal = texture(texture_norm, tex).rgb;
+    normal = normalize(normal * 2.0 - 1.0);
+
+    vec3 v   = normalize(tangent_pos_view - tangent_frag_pos); // direction from point to camera
+    vec3 l_o = vec3(0.0);  // total outgoing radiance of this fragment
+    vec3 f_0 = vec3(0.04); // surface reflection at zero incidence (0.04 for dielectric)
+    f_0      = mix(f_0, albedo, metallic); // lerp between f_0 and albedo based on metallic value
 
     for (int i = 0; i < 1; i++) {
-        vec3 l = normalize(pos_light - geom); // direction from point to light
-        vec3 h = normalize(v + l);            // halfway vector
+        vec3 l = normalize(tangent_pos_light - tangent_frag_pos); // direction from point to light
+        vec3 h = normalize(v + l);                                // halfway vector
 
         // calculate light attenuation
-        float distance    = length(pos_light - geom);    // distance towards light
+        float distance    = length(tangent_pos_light - tangent_frag_pos); // distance towards light
         float attenuation = 1.0 / (distance * distance); // light attenuation is inversely squarely correlated with dist
         vec3 radiance     = color_light * attenuation;
 
         // compute approximations
         float ndf = distribution_ggx(normal, h, roughness);
         float g   = geometry_smith(normal, v, l, roughness);
-        vec3 f   = fresnel_schlick(max(dot(h, v), 0.0), f_0);
+        vec3 f    = fresnel_schlick(clamp(dot(h, v), 0.0, 1.0), f_0);
 
         vec3 k_s = f;               // specular contribution determined by fresnel approximation
         vec3 k_d = vec3(1.0) - k_s; // diffuse contribution by law of energy conservation

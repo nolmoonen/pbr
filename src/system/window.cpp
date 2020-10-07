@@ -49,7 +49,7 @@ int32_t window::initialize()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
-    glClearColor(0.0f, 0.1f, 0.2f, 1.0f);
+    glClearColor(.8f, .8f, .8f, 1.f);
     glViewport(0, 0, INITIAL_WINDOW_SIZE_X, INITIAL_WINDOW_SIZE_Y);
 
     initialized = true;

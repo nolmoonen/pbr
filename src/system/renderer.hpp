@@ -24,6 +24,8 @@ private:
 
     /** Contains the mesh for the coordinate system. */
     Lines coordinate_mesh{};
+
+    Lines normals{}; // todo debug
 public:
 
     Renderer(

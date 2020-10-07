@@ -36,6 +36,8 @@ struct ShaderProgram {
     static void set_mat4(ShaderProgram *shader_program, const char *name, glm::mat4 val);
 
     static void set_float(ShaderProgram *shader_program, const char *name, float val);
+
+    static void set_int(ShaderProgram *shader_program, const char *name, int val);
 };
 
 struct Shader {
@@ -60,6 +62,8 @@ struct Mesh {
     GLuint m_buffer_vertex_geom;
     GLuint m_buffer_vertex_tex;
     GLuint m_buffer_vertex_normal;
+    GLuint m_buffer_vertex_tangent;
+    GLuint m_buffer_vertex_bitangent;
     GLuint m_buffer_index;
 
     // number of objects to draw
@@ -75,6 +79,7 @@ struct Mesh {
     static void create_mesh(
             Mesh *t_mesh,
             glm::vec3 *t_geom_vertices, glm::vec2 *t_text_vertices, glm::vec3 *t_norm_vertices,
+            glm::vec3 *t_tangent_vertices, glm::vec3 *t_bitangent_vertices,
             uint32_t t_vertex_count,
             GLushort *t_indices, uint32_t t_index_count
     );
@@ -97,35 +102,6 @@ struct Mesh {
      * Creates a textured unit sphere centered at (0,0,0).
      * http://www.songho.ca/opengl/gl_sphere.html */
     static void create_sphere(Mesh *mesh);
-};
-
-// todo could get superclass RenderObject or something?
-struct InstancedMesh {
-    // non-instanced mesh
-    Mesh m_mesh;
-
-    // VBO id
-    GLuint m_buffer_model_matrix;
-
-    /** number of instances to draw */
-    uint32_t m_instance_count;
-
-    /**
-     * Returns {@code EXIT_SUCCESS} on success, {@code EXIT_FAILURE} otherwise.
-     * If {@code EXIT_SUCCESS} is returned, a call to {@code delete_instanced_mesh} is required
-     * before the executable terminates.
-     */
-    static void create_instanced_mesh(
-            InstancedMesh *t_inst_mesh,
-            glm::vec3 *t_geom_vertices, glm::vec2 *t_text_vertices, glm::vec3 *t_norm_vertices,
-            uint32_t t_vertex_count,
-            GLushort *t_indices, uint32_t t_index_count,
-            glm::mat4 *t_model_matrices, uint32_t t_model_matrix_count
-    );
-
-    static void delete_instanced_mesh(InstancedMesh *t_inst_mesh);
-
-    static void render_instanced_mesh(InstancedMesh *t_inst_mesh);
 };
 
 // todo could get superclass RenderObject or something?
@@ -158,6 +134,9 @@ struct Lines {
     static void create_coordinate_axes(Lines *lines);
 
     static void create_line(Lines *line, glm::vec3 dir, glm::vec3 color);
+
+    /** Creates sphere normals, tangents and bitangents. */
+    static void create_sphere(Lines *lines);
 };
 
 struct Texture {
@@ -170,9 +149,8 @@ struct Texture {
     static int create_tex_from_file(Texture *tex, const char *tex_file, GLenum texture_unit);
 
     static int create_tex_from_mem(
-            Texture *tex, const char *tex_data, size_t tex_len, GLenum texture_unit,
-            uint32_t channel_count, uint32_t bit_depth
-    );
+            Texture *tex, const char *tex_data, size_t tex_len,
+            uint32_t channel_count, uint32_t bit_depth, uint32_t texture_unit);
 
     static void bind_tex(Texture *tex);
 

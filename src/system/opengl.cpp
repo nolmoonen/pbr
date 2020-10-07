@@ -115,6 +115,12 @@ void ShaderProgram::set_float(ShaderProgram *shader_program, const char *name, f
     glUniform1f(location, val);
 }
 
+void ShaderProgram::set_int(ShaderProgram *shader_program, const char *name, int val)
+{
+    GLint location = glGetUniformLocation(shader_program->m_shader_program, name);
+    glUniform1i(location, val);
+}
+
 int32_t Shader::create_shader(Shader *t_shader, const char *t_shader_text, GLint t_shader_size, bool t_is_vertex)
 {
     if (t_is_vertex) {
@@ -160,7 +166,9 @@ void Shader::delete_shader(Shader *t_shader)
 
 void Mesh::create_mesh(
         Mesh *t_mesh,
-        glm::vec3 *t_geom_vertices, glm::vec2 *t_text_vertices, glm::vec3 *t_norm_vertices, uint32_t t_vertex_count,
+        glm::vec3 *t_geom_vertices, glm::vec2 *t_text_vertices, glm::vec3 *t_norm_vertices,
+        glm::vec3 *t_tangent_vertices, glm::vec3 *t_bitangent_vertices,
+        uint32_t t_vertex_count,
         GLushort *t_indices, uint32_t t_index_count
 )
 {
@@ -192,6 +200,22 @@ void Mesh::create_mesh(
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void *) 0);
 
+    // create vertex tangent VBO
+    glGenBuffers(1, &t_mesh->m_buffer_vertex_tangent);
+    glBindBuffer(GL_ARRAY_BUFFER, t_mesh->m_buffer_vertex_tangent);
+    glBufferData(GL_ARRAY_BUFFER, t_vertex_count * sizeof(glm::vec3), t_tangent_vertices, GL_STATIC_DRAW);
+    // index = 3, size = 3
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void *) 0);
+
+    // create vertex bitangent VBO
+    glGenBuffers(1, &t_mesh->m_buffer_vertex_bitangent);
+    glBindBuffer(GL_ARRAY_BUFFER, t_mesh->m_buffer_vertex_bitangent);
+    glBufferData(GL_ARRAY_BUFFER, t_vertex_count * sizeof(glm::vec3), t_bitangent_vertices, GL_STATIC_DRAW);
+    // index = 3, size = 3
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, (void *) 0);
+
     // create index VBO
     glGenBuffers(1, &t_mesh->m_buffer_index);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, t_mesh->m_buffer_index);
@@ -206,6 +230,10 @@ void Mesh::delete_mesh(Mesh *t_mesh)
 {
     glDeleteBuffers(1, &t_mesh->m_buffer_index);
     t_mesh->m_buffer_index = 0;
+    glDeleteBuffers(1, &t_mesh->m_buffer_vertex_bitangent);
+    t_mesh->m_buffer_vertex_bitangent = 0;
+    glDeleteBuffers(1, &t_mesh->m_buffer_vertex_tangent);
+    t_mesh->m_buffer_vertex_tangent = 0;
     glDeleteBuffers(1, &t_mesh->m_buffer_vertex_normal);
     t_mesh->m_buffer_vertex_normal = 0;
     glDeleteBuffers(1, &t_mesh->m_buffer_vertex_tex);
@@ -416,10 +444,10 @@ void Mesh::create_cube(Mesh *mesh)
     indices[i * 6 + 4] = i * 4 + 0;
     indices[i * 6 + 5] = i * 4 + 1;
 
-    create_mesh(
-            mesh,
-            geom_vertices, tex_vertices, norm_vertices, vertex_count,
-            indices, index_count
+    // todo tangent and bitangent
+    create_mesh(mesh, geom_vertices, tex_vertices, norm_vertices,
+                norm_vertices, norm_vertices, vertex_count,
+                indices, index_count
     );
 }
 
@@ -580,17 +608,17 @@ void Mesh::create_skybox(Mesh *mesh)
     indices[i * 6 + 4] = i * 4 + 1;
     indices[i * 6 + 5] = i * 4 + 0;
 
-    create_mesh(
-            mesh,
-            geom_vertices, tex_vertices, norm_vertices, vertex_count,
-            indices, index_count
-    );
+    // todo tangent and bitangent
+    create_mesh(mesh,
+                geom_vertices, tex_vertices, norm_vertices,
+                norm_vertices, norm_vertices, vertex_count,
+                indices, index_count);
 }
 
 void Mesh::create_sphere(Mesh *mesh)
 {
-    const uint32_t STACK_COUNT = 64;
-    const uint32_t SECTOR_COUNT = 64;
+    const uint32_t STACK_COUNT = 18;
+    const uint32_t SECTOR_COUNT = 36;
 
     /** create vertices */
 
@@ -598,24 +626,28 @@ void Mesh::create_sphere(Mesh *mesh)
     glm::vec3 geom_vertices[VERTEX_COUNT];
     glm::vec2 tex_vertices[VERTEX_COUNT];
     glm::vec3 norm_vertices[VERTEX_COUNT];
+    glm::vec3 tangent_vertices[VERTEX_COUNT];
+    glm::vec3 bitangent_vertices[VERTEX_COUNT];
 
     const float STACK_STEP = M_PI / (float) STACK_COUNT;
     const float SECTOR_STEP = (2.f * (float) M_PI) / (float) SECTOR_COUNT;
 
     uint32_t vertex = 0; // vertex index
     for (uint32_t i = 0; i < STACK_COUNT + 1; i++) {
-        float stack_angle = (float) M_PI_2 - (float) i * STACK_STEP; // u from pi / 2 to -pi / 2
-        float xz = cosf(stack_angle);                                // cos(u)
-        float y = sinf(stack_angle);                                 // sin(u)
+        float stack_angle = (float) M_PI_2 - (float) i * STACK_STEP; // phi from pi / 2 to -pi / 2
+        float xz = cosf(stack_angle);                                // cos(phi)
+        float y = sinf(stack_angle);                                 // sin(phi)
 
         // add (sectorCount+1) vertices per stack
         // the first and last vertices have same position and normal, but different tex coords
         for (uint32_t j = 0; j < SECTOR_COUNT + 1; j++) {
-            float sector_angle = (float) j * SECTOR_STEP;            // v from 0 to 2 * pi
+            float sector_angle = (float) j * SECTOR_STEP; // theta from 0 to 2 * pi
 
             // vertex position (x, y, z)
-            float x = xz * cosf(sector_angle);                       // cos(u) * cos(v)
-            float z = xz * sinf(sector_angle);                       // cos(u) * sin(v)
+            float cos_theta = cosf(sector_angle);         // cos(theta)
+            float sin_theta = sinf(sector_angle);         // sin(theta)
+            float x = xz * cos_theta;                     // cos(phi) * cos(theta)
+            float z = xz * sin_theta;                     // cos(phi) * sin(theta)
             geom_vertices[vertex] = glm::vec3(x, y, z);
 
             // normalized vertex normal (nx, ny, nz)
@@ -625,6 +657,12 @@ void Mesh::create_sphere(Mesh *mesh)
             float s = 1.f - (float) j / (float) SECTOR_COUNT;
             float t = 1.f - (float) i / (float) STACK_COUNT;
             tex_vertices[vertex] = glm::vec2(s, t);
+
+            // tangent: (unitized) derivative w.r.t. theta (https://computergraphics.stackexchange.com/a/5499)
+            tangent_vertices[vertex] = glm::vec3(-sin_theta, 0.f, cos_theta);
+
+            // bitangent: (unitized) derivative w.r.t. phi (a little bit uglier)
+            bitangent_vertices[vertex] = glm::normalize(glm::vec3(-y * cos_theta, xz, -y * sin_theta));
 
             vertex++;
         }
@@ -661,68 +699,9 @@ void Mesh::create_sphere(Mesh *mesh)
         }
     }
 
-    create_mesh(mesh, geom_vertices, tex_vertices, norm_vertices, VERTEX_COUNT, indices, INDEX_COUNT);
-}
-
-void InstancedMesh::create_instanced_mesh(
-        InstancedMesh *t_inst_mesh,
-        glm::vec3 *t_geom_vertices, glm::vec2 *t_text_vertices, glm::vec3 *t_norm_vertices, uint32_t t_vertex_count,
-        GLushort *t_indices, uint32_t t_index_count,
-        glm::mat4 *t_model_matrices, uint32_t t_model_matrix_count
-)
-{
-    Mesh::create_mesh(
-            &t_inst_mesh->m_mesh,
-            t_geom_vertices, t_text_vertices, t_norm_vertices, t_vertex_count,
-            t_indices, t_index_count
-    );
-
-    // create vertex normal VBO
-    glGenBuffers(1, &t_inst_mesh->m_buffer_model_matrix);
-    glBindBuffer(GL_ARRAY_BUFFER, t_inst_mesh->m_buffer_model_matrix);
-    glBufferData(GL_ARRAY_BUFFER, t_model_matrix_count * sizeof(glm::mat4), t_model_matrices, GL_STATIC_DRAW);
-
-    glBindVertexArray(t_inst_mesh->m_mesh.m_vertex_array);
-
-    // index = 3, size = 4 * 4, stride = 4 * 0
-    glEnableVertexAttribArray(3);
-    glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4) * 0));
-    // index = 4, size = 4 * 4, stride = 4 * 1
-    glEnableVertexAttribArray(4);
-    glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4) * 1));
-    // index = 5, size = 4 * 4, stride = 4 * 2
-    glEnableVertexAttribArray(5);
-    glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4) * 2));
-    // index = 6, size = 4 * 4, stride = 4 * 3
-    glEnableVertexAttribArray(6);
-    glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4) * 3));
-
-    glVertexAttribDivisor(3, 1);
-    glVertexAttribDivisor(4, 1);
-    glVertexAttribDivisor(5, 1);
-    glVertexAttribDivisor(6, 1);
-
-    glBindVertexArray(0);
-
-    t_inst_mesh->m_instance_count = t_model_matrix_count;
-}
-
-void InstancedMesh::delete_instanced_mesh(InstancedMesh *t_inst_mesh)
-{
-    glDeleteBuffers(1, &t_inst_mesh->m_buffer_model_matrix);
-    t_inst_mesh->m_buffer_model_matrix = 0;
-}
-
-void InstancedMesh::render_instanced_mesh(InstancedMesh *t_inst_mesh)
-{
-    glBindVertexArray(t_inst_mesh->m_mesh.m_vertex_array);
-
-    glDrawElementsInstanced(
-            GL_TRIANGLES, t_inst_mesh->m_mesh.m_index_count, GL_UNSIGNED_SHORT, (void *) 0,
-            t_inst_mesh->m_instance_count
-    );
-
-    glBindVertexArray(0);
+    create_mesh(mesh, geom_vertices, tex_vertices, norm_vertices,
+                tangent_vertices, bitangent_vertices, VERTEX_COUNT,
+                indices, INDEX_COUNT);
 }
 
 void Lines::create_lines(
@@ -784,31 +763,22 @@ void Lines::render_lines(Lines *lines)
 
 void Lines::create_coordinate_axes(Lines *lines)
 {
-    const float SIZE = 10.f;
-    uint32_t vertex_count = 6 * 2; // six axes
+    const float SIZE = 5.f;
+    uint32_t vertex_count = 3 * 2; // three axes
     glm::vec3 geom_vertices[] = {
             glm::vec3(0.f, 0.f, 0.f), glm::vec3(+SIZE, 0.f, 0.f),
-            glm::vec3(0.f, 0.f, 0.f), glm::vec3(-SIZE, 0.f, 0.f),
             glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, +SIZE, 0.f),
-            glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, -SIZE, 0.f),
             glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, +SIZE),
-            glm::vec3(0.f, 0.f, 0.f), glm::vec3(0.f, 0.f, -SIZE),
     };
     glm::vec3 color_vertices[] = {
-            glm::vec3(1.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f),
-            glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f, 0.f, 0.f),
-            glm::vec3(0.f, 1.f, 0.f), glm::vec3(1.f, 1.f, 1.f),
-            glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.f, 0.f, 0.f),
-            glm::vec3(0.f, 0.f, 1.f), glm::vec3(1.f, 1.f, 1.f),
-            glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 0.f),
+            glm::vec3(1.f, 0.f, 0.f), glm::vec3(1.f, 0.f, 0.f),
+            glm::vec3(0.f, 1.f, 0.f), glm::vec3(0.f, 1.f, 0.f),
+            glm::vec3(0.f, 0.f, 1.f), glm::vec3(0.f, 0.f, 1.f),
     };
-    uint32_t index_count = 6 * 2; // six axes
-    GLushort indices[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11};
+    uint32_t index_count = 3 * 2; // three axes
+    GLushort indices[] = {0, 1, 2, 3, 4, 5};
 
-    create_lines(
-            lines,
-            geom_vertices, color_vertices, vertex_count,
-            indices, index_count
+    create_lines(lines, geom_vertices, color_vertices, vertex_count, indices, index_count
     );
 }
 
@@ -825,6 +795,61 @@ void Lines::create_line(Lines *line, glm::vec3 dir, glm::vec3 color)
             geom_vertices, color_vertices, vertex_count,
             indices, index_count
     );
+}
+
+void Lines::create_sphere(Lines *lines)
+{
+    const uint32_t STACK_COUNT = 18;
+    const uint32_t SECTOR_COUNT = 36;
+
+    const uint32_t SPHERE_VERTICES = (STACK_COUNT + 1) * (SECTOR_COUNT + 1);
+    // 1 for vertex, 1 for normal, 1 for tangent, 1 for bitangent
+    const uint32_t VERTEX_COUNT = SPHERE_VERTICES * 4;
+    glm::vec3 geom_vertices[VERTEX_COUNT];
+    glm::vec3 color_vertices[VERTEX_COUNT];
+    const uint32_t INDEX_COUNT = SPHERE_VERTICES * 6; // three lines per vertex
+    GLushort indices[INDEX_COUNT];
+
+    const float STACK_STEP = M_PI / (float) STACK_COUNT;
+    const float SECTOR_STEP = (2.f * (float) M_PI) / (float) SECTOR_COUNT;
+
+    uint32_t vertex = 0;
+    uint32_t index = 0;
+    for (uint32_t i = 0; i < STACK_COUNT + 1; i++) {
+        float stack_angle = (float) M_PI_2 - (float) i * STACK_STEP;
+        float xz = cosf(stack_angle);
+        float y = sinf(stack_angle);
+
+        for (uint32_t j = 0; j < SECTOR_COUNT + 1; j++) {
+            float sector_angle = (float) j * SECTOR_STEP;
+
+            float cos_theta = cosf(sector_angle);
+            float sin_theta = sinf(sector_angle);
+            float x = xz * cos_theta;
+            float z = xz * sin_theta;
+            glm::vec3 geom = glm::vec3(x, y, z); // vertex
+            geom_vertices[vertex + 0] = geom;
+            color_vertices[vertex + 0] = glm::vec3(1.f);
+            geom_vertices[vertex + 1] = geom + geom * .1f;
+            color_vertices[vertex + 1] = glm::vec3(0.f, 0.f, 1.f);
+            glm::vec3 tangent = glm::vec3(-sin_theta, 0.f, cos_theta);
+            geom_vertices[vertex + 2] = geom + tangent * .1f;
+            color_vertices[vertex + 2] = glm::vec3(1.f, 0.f, 0.f);
+            glm::vec3 bitangent = glm::normalize(glm::vec3(-y * cos_theta, xz, -y * sin_theta));
+            geom_vertices[vertex + 3] = geom + bitangent * .1f;
+            color_vertices[vertex + 3] = glm::vec3(0.f, 1.f, 0.f);
+
+            indices[index++] = vertex + 0;
+            indices[index++] = vertex + 1;
+            indices[index++] = vertex + 0;
+            indices[index++] = vertex + 2;
+            indices[index++] = vertex + 0;
+            indices[index++] = vertex + 3;
+            vertex += 4;
+        }
+    }
+
+    create_lines(lines, geom_vertices, color_vertices, VERTEX_COUNT, indices, INDEX_COUNT);
 }
 
 // todo merge better with {create_tex_from_mem} and also deprecated
@@ -872,8 +897,8 @@ int Texture::create_tex_from_file(Texture *tex, const char *tex_file, GLenum tex
 }
 
 int Texture::create_tex_from_mem(
-        Texture *tex, const char *tex_data, size_t tex_len, GLenum texture_unit,
-        uint32_t channel_count, uint32_t bit_depth
+        Texture *tex, const char *tex_data, size_t tex_len,
+        uint32_t channel_count, uint32_t bit_depth, uint32_t texture_unit
 )
 {
     glGenTextures(1, &tex->m_tex_id);
@@ -957,7 +982,7 @@ int Texture::create_tex_from_mem(
 
     stbi_image_free(data);
 
-    tex->m_texture_unit = texture_unit;
+    tex->m_texture_unit = GL_TEXTURE0 + texture_unit;
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -972,6 +997,7 @@ void Texture::bind_tex(Texture *tex)
 
 void Texture::unbind_tex()
 {
+    // todo make active texture unit specific
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 

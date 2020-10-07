@@ -30,6 +30,7 @@ embed(pbr_frag res/shader/pbr.frag)
 
 embed(test_png res/tex/test.png)
 embed(brick_diff_png res/tex/castle_brick_07_1k_png/castle_brick_07_diff_1k.png)
+embed(brick_norm_png res/tex/castle_brick_07_1k_png/castle_brick_07_nor_1k.png)
 
 # build glfw, glad, and glm before adding compile options
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)

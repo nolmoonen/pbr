@@ -617,8 +617,10 @@ void Mesh::create_skybox(Mesh *mesh)
 
 void Mesh::create_sphere(Mesh *mesh)
 {
-    const uint32_t STACK_COUNT = 18;
-    const uint32_t SECTOR_COUNT = 36;
+    const uint32_t STACK_COUNT = 64;
+    const uint32_t SECTOR_COUNT = 64;
+    const uint32_t HOR_TEXTURE_SCALE = 3;
+    const uint32_t VER_TEXTURE_SCALE = 2;
 
     /** create vertices */
 
@@ -654,8 +656,8 @@ void Mesh::create_sphere(Mesh *mesh)
             norm_vertices[vertex] = glm::vec3(x, y, z);
 
             // vertex tex coord (s, t) range between [0, 1]
-            float s = 1.f - (float) j / (float) SECTOR_COUNT;
-            float t = 1.f - (float) i / (float) STACK_COUNT;
+            float s = 1.f - (float) j / (float) (SECTOR_COUNT / (float) HOR_TEXTURE_SCALE);
+            float t = 1.f - (float) i / (float) (STACK_COUNT / (float) VER_TEXTURE_SCALE);
             tex_vertices[vertex] = glm::vec2(s, t);
 
             // tangent: (unitized) derivative w.r.t. theta (https://computergraphics.stackexchange.com/a/5499)
@@ -799,8 +801,8 @@ void Lines::create_line(Lines *line, glm::vec3 dir, glm::vec3 color)
 
 void Lines::create_sphere(Lines *lines)
 {
-    const uint32_t STACK_COUNT = 18;
-    const uint32_t SECTOR_COUNT = 36;
+    const uint32_t STACK_COUNT = 64;
+    const uint32_t SECTOR_COUNT = 64;
 
     const uint32_t SPHERE_VERTICES = (STACK_COUNT + 1) * (SECTOR_COUNT + 1);
     // 1 for vertex, 1 for normal, 1 for tangent, 1 for bitangent

@@ -47,9 +47,15 @@ void Renderer::render()
                            (signed) texture_manager->get(TEXTURE_BRICK_DIFF)->m_texture_unit - GL_TEXTURE0);
     ShaderProgram::set_int(program, "texture_norm",
                            (signed) texture_manager->get(TEXTURE_BRICK_NORM)->m_texture_unit - GL_TEXTURE0);
+    ShaderProgram::set_int(program, "texture_ao",
+                           (signed) texture_manager->get(TEXTURE_BRICK_AO)->m_texture_unit - GL_TEXTURE0);
+    ShaderProgram::set_int(program, "texture_rough",
+                           (signed) texture_manager->get(TEXTURE_BRICK_ROUGH)->m_texture_unit - GL_TEXTURE0);
 
     Texture::bind_tex(texture_manager->get(TEXTURE_BRICK_DIFF));
     Texture::bind_tex(texture_manager->get(TEXTURE_BRICK_NORM));
+    Texture::bind_tex(texture_manager->get(TEXTURE_BRICK_AO));
+    Texture::bind_tex(texture_manager->get(TEXTURE_BRICK_ROUGH));
     Mesh::render_mesh(mesh_manager->get(MESH_SPHERE));
     Texture::unbind_tex();
     ShaderProgram::unuse_shader_program();

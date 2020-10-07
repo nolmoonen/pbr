@@ -941,13 +941,20 @@ int Texture::create_tex_from_mem(
     // since stbi may complain but will always allocate the number of channels the user specifies
     if (data) {
         GLenum format;
-        if (channel_count == 3) {
+        GLenum internal_format;
+        if (channel_count == 2) {
+            format = GL_RG;
+            internal_format = GL_RG;
+        } else if (channel_count == 3) {
             format = GL_RGB;
+            internal_format = GL_RGB;
         } else if (channel_count == 4) {
             format = GL_RGBA;
+            internal_format = GL_RGBA;
         } else {
             nm_log::log(LOG_WARN, "unknown texture format, guessing GL_RGBA\n");
             format = GL_RGBA;
+            internal_format = GL_RGBA;
         }
 
         GLenum type;
@@ -961,17 +968,7 @@ int Texture::create_tex_from_mem(
         }
 
         // NB: first pixel is lower-left corner
-        GLenum internal_format;
-        if (format == GL_RGB || format == GL_RGB16_SNORM) {
-            internal_format = GL_RGB;
-        } else if (format == GL_RGBA || format == GL_RGBA16) {
-            internal_format = GL_RGBA;
-        } else {
-            nm_log::log(LOG_WARN, "internal format not specified, guessing GL_RGBA\n");
-            internal_format = GL_RGBA;
-        }
-
-        glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, GL_RGBA, type, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, type, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     } else {
         nm_log::log(LOG_ERROR, "failed to load texture\n");

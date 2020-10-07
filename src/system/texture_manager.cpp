@@ -5,9 +5,11 @@ template<>
 inline Manager<Texture>::~Manager<Texture>() = default;
 
 const TextureManager::TextureResource TextureManager::TEXTURE_RESOURCES[] = {
-        {TEXTURE_TEST,       4, 8,  0, test_png,       &test_png_len},
-        {TEXTURE_BRICK_DIFF, 4, 16, 0, brick_diff_png, &brick_diff_png_len},
-        {TEXTURE_BRICK_NORM, 4, 16, 1, brick_norm_png, &brick_norm_png_len},
+        {TEXTURE_TEST,        4, 8,  0, test_png,        &test_png_len},
+        {TEXTURE_BRICK_DIFF,  4, 16, 0, brick_diff_png,  &brick_diff_png_len},
+        {TEXTURE_BRICK_NORM,  4, 16, 1, brick_norm_png,  &brick_norm_png_len},
+        {TEXTURE_BRICK_AO,    2, 16, 2, brick_ao_png,    &brick_ao_png_len},
+        {TEXTURE_BRICK_ROUGH, 2, 16, 3, brick_rough_png, &brick_rough_png_len},
 };
 
 int32_t TextureManager::create_item(Texture *item, uint32_t id)

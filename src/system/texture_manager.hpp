@@ -7,8 +7,11 @@
 #include "manager.hpp"
 
 #define TEXTURE_TEST 0
+
 #define TEXTURE_BRICK_DIFF 1
 #define TEXTURE_BRICK_NORM 2
+#define TEXTURE_BRICK_AO 3
+#define TEXTURE_BRICK_ROUGH 4
 
 /** Specified manually based on identifiers in CMakeLists. */
 extern const char test_png[];
@@ -19,6 +22,12 @@ extern const size_t brick_diff_png_len;
 
 extern const char brick_norm_png[];
 extern const size_t brick_norm_png_len;
+
+extern const char brick_ao_png[];
+extern const size_t brick_ao_png_len;
+
+extern const char brick_rough_png[];
+extern const size_t brick_rough_png_len;
 
 class TextureManager : public Manager<Texture> {
 private:

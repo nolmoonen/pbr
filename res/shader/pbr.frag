@@ -4,12 +4,12 @@
 
 uniform sampler2D texture_diff;
 uniform sampler2D texture_norm;
+uniform sampler2D texture_ao;
+uniform sampler2D texture_rough;
 
 uniform vec3 color_light;
 
 uniform float metallic;
-uniform float roughness;
-uniform float ao;
 
 in vec2 tex;
 in vec3 tangent_pos_light;
@@ -48,6 +48,9 @@ void main()
     // obtain normal from normal map in range [0, 1], transform to [-1, 1] ({normal} is in tangent space)
     vec3 normal = texture(texture_norm, tex).rgb;
     normal = normalize(normal * 2.0 - 1.0);
+
+    float ao = texture(texture_ao, tex).r;
+    float roughness = texture(texture_rough, tex).r;
 
     vec3 v   = normalize(tangent_pos_view - tangent_frag_pos); // direction from point to camera
     vec3 l_o = vec3(0.0);  // total outgoing radiance of this fragment

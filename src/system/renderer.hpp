@@ -11,6 +11,7 @@
 #include "shader_manager.hpp"
 #include "texture_manager.hpp"
 #include "mesh_manager.hpp"
+#include "../scene/scene.hpp"
 
 class Renderer {
 private:
@@ -20,12 +21,10 @@ private:
     MeshManager *mesh_manager;
 
     /** Whether the coordinate system should be drawn. */
-    bool draw_coordinate = false;
+    bool debug_mode = false;
 
     /** Contains the mesh for the coordinate system. */
     Lines coordinate_mesh{};
-
-    Lines normals{}; // todo debug
 public:
 
     Renderer(
@@ -35,7 +34,7 @@ public:
 
     ~Renderer();
 
-    void render();
+    void render(Scene *scene);
 
     void toggle_draw_coordinate();
 };

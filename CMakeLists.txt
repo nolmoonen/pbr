@@ -3,6 +3,11 @@ project(pbr)
 
 set(CMAKE_CXX_STANDARD 11)
 
+set(SCENE_SOURCES
+        src/scene/scene.cpp src/scene/scene.hpp
+        src/scene/scene_object.cpp src/scene/scene_object.hpp
+        src/scene/sphere.cpp src/scene/sphere.hpp)
+
 set(SOURCES
         src/main.cpp
         src/system/window.cpp src/system/window.hpp
@@ -14,13 +19,12 @@ set(SOURCES
         src/system/manager.cpp src/system/manager.hpp
         src/system/texture_manager.cpp src/system/texture_manager.hpp
         src/util/nm_log.cpp src/util/nm_log.hpp
-        src/system/mesh_manager.cpp src/system/mesh_manager.hpp)
+        src/system/mesh_manager.cpp src/system/mesh_manager.hpp src/scene/light.cpp src/scene/light.hpp)
 
 # resource files
 add_subdirectory(embedder)
 embed(default_vert res/shader/default.vert)
 embed(default_frag res/shader/default.frag)
-embed(instance_vert res/shader/instance.vert)
 embed(phong_vert res/shader/phong.vert)
 embed(phong_frag res/shader/phong.frag)
 embed(lines_vert res/shader/lines.vert)
@@ -47,7 +51,7 @@ set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")
 
 # add extra warnings
 add_compile_options(-Wall -Wextra -pedantic)
-add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${EMBEDDED_RESOURCES})
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${SCENE_SOURCES} ${EMBEDDED_RESOURCES})
 
 # link glfw, glad, glm, stb
 target_link_libraries(${CMAKE_PROJECT_NAME} glfw)

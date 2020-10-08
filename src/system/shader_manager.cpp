@@ -13,13 +13,6 @@ const ShaderManager::ShaderResource ShaderManager::SHADER_PROGRAM_RESOURCES[] = 
                 default_frag, &default_frag_len
         },
         {
-                SHADER_INSTANCED,
-                {},
-                {"modelMatrix", "viewMatrix", "projectionMatrix"},
-                instance_vert, &instance_vert_len,
-                default_frag, &default_frag_len
-        },
-        {
                 SHADER_PHONG,
                 {"pos_light", "pos_camera", "color_light"},
                 {"modelMatrix", "viewMatrix", "projectionMatrix"},

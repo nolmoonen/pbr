@@ -28,15 +28,17 @@ int main()
 
     Renderer renderer(&camera, &shader_manager, &texture_manager, &mesh_manager);
 
+    Scene scene;
+
     while (!window::get_instance().should_close()) {
         window::get_instance().get_input_handler()->pull_input();
 
         // process system input
         update(&camera, &renderer);
 
-        renderer.render();
+        scene.update();
 
-        window::get_instance().swap_buffers();
+        renderer.render(&scene);
 
         // allow managers to deallocate objects not used in last frame
         shader_manager.make_space();

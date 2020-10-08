@@ -21,7 +21,10 @@ void Scene::render(
 Scene::Scene()
 {
     objects.emplace_back((SceneObject *) new Sphere(this, glm::vec3(0.f)));
-    lights.emplace_back(Light(glm::vec3(1.f, 1.f, 1.f), glm::vec3(1.f, 1.f, 1.f)));
+    lights.emplace_back(Light(glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f)));
+    lights.emplace_back(Light(glm::vec3(-1.f, 1.f, +1.f), glm::vec3(1.f, 1.f, 1.f)));
+    lights.emplace_back(Light(glm::vec3(+1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f)));
+    lights.emplace_back(Light(glm::vec3(+1.f, 1.f, +1.f), glm::vec3(1.f, 1.f, 1.f)));
 }
 
 void Scene::update()

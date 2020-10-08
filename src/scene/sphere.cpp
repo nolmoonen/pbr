@@ -29,11 +29,14 @@ void Sphere::render(
     ShaderProgram::set_mat4(program, "view_matrix", camera->get_view_matrix());
     ShaderProgram::set_mat4(program, "projection_matrix", camera->get_proj_matrix());
 
+    std::vector<glm::vec3> positions;
+    std::vector<glm::vec3> colors;
     for (auto &light:scene->lights) {
-        // todo add multiple lights
-        ShaderProgram::set_vec3(program, "pos_light", light.position);
-        ShaderProgram::set_vec3(program, "color_light", light.color);
+        positions.emplace_back(light.position);
+        colors.emplace_back(light.color);
     }
+    ShaderProgram::set_vec3_array(program, "pos_light", positions);
+    ShaderProgram::set_vec3_array(program, "color_light", colors);
 
     ShaderProgram::set_vec3(program, "pos_camera", camera->get_camera_position());
 

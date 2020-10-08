@@ -2,23 +2,24 @@
 // use with: 'pbr.vert'
 #version 330 core
 
+#define NUM_LIGHTS 10
+#define M_PI 3.1415926535897932384626433832795
+
 uniform sampler2D texture_diff;
 uniform sampler2D texture_norm;
 uniform sampler2D texture_ao;
 uniform sampler2D texture_rough;
 
-uniform vec3 color_light;
+uniform vec3 color_light[NUM_LIGHTS];
 
 uniform float metallic;
 
 in vec2 tex;
-in vec3 tangent_pos_light;
+in vec3 tangent_pos_light[NUM_LIGHTS];
 in vec3 tangent_pos_view;
 in vec3 tangent_frag_pos;
 
 out vec4 frag_color;
-
-#define M_PI 3.1415926535897932384626433832795
 
 /*  Fresnel equation:
     Returns the light {f_0} reflected from a surface hit with angle {cos_theta}.
@@ -57,14 +58,14 @@ void main()
     vec3 f_0 = vec3(0.04); // surface reflection at zero incidence (0.04 for dielectric)
     f_0      = mix(f_0, albedo, metallic); // lerp between f_0 and albedo based on metallic value
 
-    for (int i = 0; i < 1; i++) {
-        vec3 l = normalize(tangent_pos_light - tangent_frag_pos); // direction from point to light
+    for (int i = 0; i < NUM_LIGHTS; i++) {
+        vec3 l = normalize(tangent_pos_light[i] - tangent_frag_pos); // direction from point to light
         vec3 h = normalize(v + l);                                // halfway vector
 
         // calculate light attenuation
-        float distance    = length(tangent_pos_light - tangent_frag_pos); // distance towards light
+        float distance    = length(tangent_pos_light[i] - tangent_frag_pos); // distance towards light
         float attenuation = 1.0 / (distance * distance); // light attenuation is inversely squarely correlated with dist
-        vec3 radiance     = color_light * attenuation;
+        vec3 radiance     = color_light[i] * attenuation;
 
         // compute approximations
         float ndf = distribution_ggx(normal, h, roughness);

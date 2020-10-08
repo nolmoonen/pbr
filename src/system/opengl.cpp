@@ -3,6 +3,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include <stb_image.h>
+#include <vector>
 
 int32_t ShaderProgram::create_shader_program(
         ShaderProgram *t_shader_program,
@@ -119,6 +120,12 @@ void ShaderProgram::set_int(ShaderProgram *shader_program, const char *name, int
 {
     GLint location = glGetUniformLocation(shader_program->m_shader_program, name);
     glUniform1i(location, val);
+}
+
+void ShaderProgram::set_vec3_array(ShaderProgram *shader_program, const char *name, std::vector<glm::vec3> vals)
+{
+    GLint location = glGetUniformLocation(shader_program->m_shader_program, name);
+    glUniform3fv(location, vals.size(), glm::value_ptr(vals.front()));
 }
 
 int32_t Shader::create_shader(Shader *t_shader, const char *t_shader_text, GLint t_shader_size, bool t_is_vertex)

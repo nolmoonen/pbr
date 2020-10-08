@@ -10,6 +10,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/mat4x4.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <vector>
 
 #include "../util/nm_log.hpp"
 
@@ -38,6 +39,8 @@ struct ShaderProgram {
     static void set_float(ShaderProgram *shader_program, const char *name, float val);
 
     static void set_int(ShaderProgram *shader_program, const char *name, int val);
+
+    static void set_vec3_array(ShaderProgram *shader_program, const char *name, std::vector<glm::vec3> vals);
 };
 
 struct Shader {

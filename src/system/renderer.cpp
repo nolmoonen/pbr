@@ -14,15 +14,7 @@ void Renderer::render(Scene *scene)
 {
     glClear((uint32_t) GL_COLOR_BUFFER_BIT | (uint32_t) GL_DEPTH_BUFFER_BIT);
 
-    if (debug_mode) {
-        ShaderProgram *program = shader_manager->get(SHADER_LINES);
-        ShaderProgram::use_shader_program(program);
-        ShaderProgram::set_mat4(program, "model_matrix", glm::identity<glm::mat4>());
-        ShaderProgram::set_mat4(program, "view_matrix", camera->get_view_matrix());
-        ShaderProgram::set_mat4(program, "projection_matrix", camera->get_proj_matrix());
-        Lines::render_lines(&coordinate_mesh);
-        ShaderProgram::unuse_shader_program();
-    }
+    if (debug_mode) render_coordinates(glm::identity<glm::mat4>());
 
     scene->render(camera, shader_manager, texture_manager, mesh_manager, debug_mode);
 
@@ -37,4 +29,15 @@ void Renderer::toggle_draw_coordinate()
 Renderer::~Renderer()
 {
     Lines::delete_lines(&coordinate_mesh);
+}
+
+void Renderer::render_coordinates(glm::mat4 model_matrix)
+{
+    ShaderProgram *program = shader_manager->get(SHADER_LINES);
+    ShaderProgram::use_shader_program(program);
+    ShaderProgram::set_mat4(program, "model_matrix", model_matrix);
+    ShaderProgram::set_mat4(program, "view_matrix", camera->get_view_matrix());
+    ShaderProgram::set_mat4(program, "projection_matrix", camera->get_proj_matrix());
+    Lines::render_lines(&coordinate_mesh);
+    ShaderProgram::unuse_shader_program();
 }

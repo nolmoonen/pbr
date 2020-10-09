@@ -4,6 +4,11 @@
 *   Clone [GLM 0.9.9.8](https://github.com/g-truc/glm/releases/tag/0.9.9.8) into directory `external/glm-0.9.9.8`.
 *   Clone [stb](https://github.com/nothings/stb) into directory `external/stb`.
 *   Build using CMake.
- 
+
+#### Todo
+*   Texture streaming
+*   Displacement mapping
+*   Fix sphere mesh (release vs debug)
+
 #### Image credit
-* Textures obtained from [TextureHaven](https://texturehaven.com/).
+*   Textures obtained from [TextureHaven](https://texturehaven.com/).

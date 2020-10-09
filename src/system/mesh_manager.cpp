@@ -6,7 +6,7 @@ inline Manager<Mesh>::~Manager<Mesh>() = default;
 
 const MeshManager::MeshResource MeshManager::MESH_RESOURCES[] = {
         {MESH_SKYBOX, &Mesh::create_skybox},
-        {MESH_CUBE, &Mesh::create_cube},
+        {MESH_CUBE,   &Mesh::create_cube},
         {MESH_SPHERE, &Mesh::create_sphere},
 };
 

@@ -18,6 +18,8 @@ public:
     void render(
             Camera *camera, ShaderManager *shader_manager, TextureManager *texture_manager, MeshManager *mesh_manager,
             bool debug_mode) override;
+
+    bool hit(float *t, glm::vec3 origin, glm::vec3 direction) override;
 };
 
 #endif //PBR_SPHERE_HPP

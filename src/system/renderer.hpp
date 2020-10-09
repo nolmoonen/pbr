@@ -37,6 +37,8 @@ public:
     void render(Scene *scene);
 
     void toggle_draw_coordinate();
+
+    void render_coordinates(glm::mat4 model_matrix);
 };
 
 

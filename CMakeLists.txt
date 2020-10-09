@@ -24,7 +24,8 @@ set(SOURCES
         src/system/texture_manager.cpp
         src/system/mesh_manager.cpp
         src/util/nm_log.cpp
-        src/util/util.cpp)
+        src/util/util.cpp
+        src/util/nm_math.cpp)
 
 # resource files
 add_subdirectory(embedder)

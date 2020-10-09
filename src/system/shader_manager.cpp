@@ -16,22 +16,22 @@ const ShaderManager::ShaderResource ShaderManager::SHADER_PROGRAM_RESOURCES[] = 
                 SHADER_PHONG,
                 {"pos_light", "pos_camera", "color_light"},
                 {"modelMatrix", "viewMatrix", "projectionMatrix"},
-                phong_vert, &phong_vert_len,
-                phong_frag, &phong_frag_len
+                phong_vert,   &phong_vert_len,
+                phong_frag,   &phong_frag_len
         },
         {
                 SHADER_LINES,
                 {},
                 {"modelMatrix", "viewMatrix", "projectionMatrix"},
-                lines_vert, &lines_vert_len,
-                lines_frag, &lines_frag_len
+                lines_vert,   &lines_vert_len,
+                lines_frag,   &lines_frag_len
         },
         {
                 SHADER_PBR,
                 {},
                 {"modelMatrix", "viewMatrix", "projectionMatrix"},
-                pbr_vert, &pbr_vert_len,
-                pbr_frag, &pbr_frag_len
+                pbr_vert,     &pbr_vert_len,
+                pbr_frag,     &pbr_frag_len
         }
 };
 

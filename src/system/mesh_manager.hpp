@@ -13,6 +13,7 @@ private:
     // todo find better solution and combine with ShaderResource?
     typedef struct {
         uint32_t id;
+
         void (*create_function)(Mesh *);
     } MeshResource;
 

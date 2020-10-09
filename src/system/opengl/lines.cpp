@@ -74,8 +74,7 @@ void Lines::create_coordinate_axes(Lines *lines)
     uint32_t index_count = 3 * 2; // three axes
     GLushort indices[] = {0, 1, 2, 3, 4, 5};
 
-    create_lines(lines, geom_vertices, color_vertices, vertex_count, indices, index_count
-    );
+    create_lines(lines, geom_vertices, color_vertices, vertex_count, indices, index_count);
 }
 
 void Lines::create_line(Lines *line, glm::vec3 dir, glm::vec3 color)
@@ -86,11 +85,7 @@ void Lines::create_line(Lines *line, glm::vec3 dir, glm::vec3 color)
     uint32_t index_count = 2;
     GLushort indices[] = {0, 1};
 
-    create_lines(
-            line,
-            geom_vertices, color_vertices, vertex_count,
-            indices, index_count
-    );
+    create_lines(line, geom_vertices, color_vertices, vertex_count, indices, index_count);
 }
 
 void Lines::create_sphere(Lines *lines)

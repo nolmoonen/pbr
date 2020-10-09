@@ -1,4 +1,5 @@
 #include "sphere.hpp"
+#include "../util/nm_math.hpp"
 
 Sphere::Sphere(Scene *scene, const glm::vec3 &position) : SceneObject(scene, position)
 {
@@ -28,9 +29,9 @@ void Sphere::render(
 
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> colors;
-    for (auto &light:scene->lights) {
-        positions.emplace_back(light.position);
-        colors.emplace_back(light.color);
+    for (auto &light : scene->lights) {
+        positions.emplace_back(light->position);
+        colors.emplace_back(light->color);
     }
     ShaderProgram::set_vec3_array(program, "pos_light", positions);
     ShaderProgram::set_vec3_array(program, "color_light", colors);
@@ -55,4 +56,9 @@ void Sphere::render(
     Mesh::render_mesh(mesh_manager->get(MESH_SPHERE));
     Texture::unbind_tex();
     ShaderProgram::unuse_shader_program();
+}
+
+bool Sphere::hit(float *t, glm::vec3 origin, glm::vec3 direction)
+{
+    return nm_math::ray_sphere(t, origin, direction, position, 1.f);
 }

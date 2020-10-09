@@ -1,8 +1,8 @@
 #ifndef SYSTEM_MESH_MANAGER_HPP
 #define SYSTEM_MESH_MANAGER_HPP
 
-#include "opengl.hpp"
 #include "manager.hpp"
+#include "opengl/mesh.hpp"
 
 #define MESH_SKYBOX 0
 #define MESH_CUBE 1

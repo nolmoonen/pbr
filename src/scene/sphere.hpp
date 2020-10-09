@@ -2,6 +2,12 @@
 #define PBR_SPHERE_HPP
 
 #include "scene_object.hpp"
+#include "../system/opengl/lines.hpp"
+#include "scene.hpp"
+#include "../system/camera.hpp"
+#include "../system/shader_manager.hpp"
+#include "../system/texture_manager.hpp"
+#include "../system/mesh_manager.hpp"
 
 class Sphere : public SceneObject {
 private:

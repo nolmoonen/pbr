@@ -1,5 +1,4 @@
 #include "renderer.hpp"
-#include "opengl.hpp"
 
 Renderer::Renderer(
         Camera *p_camera, ShaderManager *p_shader_manager, TextureManager *p_texture_manager,

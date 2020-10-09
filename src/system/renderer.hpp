@@ -7,11 +7,11 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 #include "camera.hpp"
-#include "opengl.hpp"
 #include "shader_manager.hpp"
 #include "texture_manager.hpp"
 #include "mesh_manager.hpp"
 #include "../scene/scene.hpp"
+#include "opengl/lines.hpp"
 
 class Renderer {
 private:

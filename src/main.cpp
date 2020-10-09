@@ -3,7 +3,6 @@
 #include <glm/mat4x4.hpp>
 
 #include "system/window.hpp"
-#include "system/opengl.hpp"
 #include "system/camera.hpp"
 #include "system/renderer.hpp"
 #include "system/texture_manager.hpp"

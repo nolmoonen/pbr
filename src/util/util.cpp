@@ -1,7 +1,4 @@
-#include <fstream>
-#include <vector>
 #include "util.hpp"
-#include "nm_log.hpp"
 
 int Util::read_file(char **buffer, size_t *size, const char *file_name)
 {

@@ -1,7 +1,12 @@
 #ifndef SCENE_SCENEOBJECT_HPP
 #define SCENE_SCENEOBJECT_HPP
 
+#include <glm/vec3.hpp>
 #include "scene.hpp"
+#include "../system/camera.hpp"
+#include "../system/shader_manager.hpp"
+#include "../system/texture_manager.hpp"
+#include "../system/mesh_manager.hpp"
 
 class Scene;
 

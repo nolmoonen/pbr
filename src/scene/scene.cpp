@@ -1,8 +1,5 @@
 #include "scene.hpp"
-#include "../system/camera.hpp"
-#include "../system/shader_manager.hpp"
-#include "../system/texture_manager.hpp"
-#include "../system/mesh_manager.hpp"
+
 #include "sphere.hpp"
 
 void Scene::render(

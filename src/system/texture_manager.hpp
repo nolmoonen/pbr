@@ -3,8 +3,8 @@
 
 #include <cstdint>
 
-#include "opengl.hpp"
 #include "manager.hpp"
+#include "opengl/texture.hpp"
 
 #define TEXTURE_TEST 0
 

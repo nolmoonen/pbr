@@ -4,8 +4,8 @@
 #include <cstdint>
 #include <vector>
 
-#include "opengl.hpp"
 #include "manager.hpp"
+#include "opengl/shader.hpp"
 
 // todo make enum?
 #define SHADER_DEFAULT   0

@@ -4,22 +4,27 @@ project(pbr)
 set(CMAKE_CXX_STANDARD 11)
 
 set(SCENE_SOURCES
-        src/scene/scene.cpp src/scene/scene.hpp
-        src/scene/scene_object.cpp src/scene/scene_object.hpp
-        src/scene/sphere.cpp src/scene/sphere.hpp)
+        src/scene/scene.cpp
+        src/scene/scene_object.cpp
+        src/scene/sphere.cpp
+        src/scene/light.cpp)
 
 set(SOURCES
         src/main.cpp
-        src/system/window.cpp src/system/window.hpp
-        src/system/input.cpp src/system/input.hpp
-        src/system/opengl.cpp src/system/opengl.hpp
-        src/system/renderer.cpp src/system/renderer.hpp
-        src/system/shader_manager.cpp src/system/shader_manager.hpp
-        src/system/camera.cpp src/system/camera.hpp
-        src/system/manager.cpp src/system/manager.hpp
-        src/system/texture_manager.cpp src/system/texture_manager.hpp
-        src/util/nm_log.cpp src/util/nm_log.hpp
-        src/system/mesh_manager.cpp src/system/mesh_manager.hpp src/scene/light.cpp src/scene/light.hpp src/util/util.cpp src/util/util.hpp)
+        src/system/opengl/mesh.cpp
+        src/system/opengl/lines.cpp
+        src/system/opengl/texture.cpp
+        src/system/opengl/shader.cpp
+        src/system/window.cpp
+        src/system/input.cpp
+        src/system/renderer.cpp
+        src/system/shader_manager.cpp
+        src/system/camera.cpp
+        src/system/manager.cpp
+        src/system/texture_manager.cpp
+        src/system/mesh_manager.cpp
+        src/util/nm_log.cpp
+        src/util/util.cpp)
 
 # resource files
 add_subdirectory(embedder)

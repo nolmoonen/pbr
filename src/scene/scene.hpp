@@ -1,13 +1,6 @@
 #ifndef SCENE_SCENE_HPP
 #define SCENE_SCENE_HPP
 
-#include <vector>
-#include <cstdint>
-
-#include "../system/texture_manager.hpp"
-#include "../system/mesh_manager.hpp"
-#include "../system/shader_manager.hpp"
-#include "../system/camera.hpp"
 #include "light.hpp"
 #include "scene_object.hpp"
 

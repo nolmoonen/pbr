@@ -4,6 +4,4 @@ SceneObject::SceneObject(Scene *scene, glm::vec3 position) : scene(scene), posit
 {}
 
 SceneObject::~SceneObject()
-{
-
-}
+{}

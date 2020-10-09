@@ -1,4 +1,5 @@
 #include "opengl.hpp"
+#include "../util/util.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 
@@ -862,47 +863,19 @@ void Lines::create_sphere(Lines *lines)
 }
 
 // todo merge better with {create_tex_from_mem} and also deprecated
-int Texture::create_tex_from_file(Texture *tex, const char *tex_file, GLenum texture_unit)
+int Texture::create_tex_from_file(
+        Texture *tex, const char *tex_file,
+        uint32_t channel_count, uint32_t bit_depth, uint32_t texture_unit)
 {
-    glGenTextures(1, &tex->m_tex_id);
-    glBindTexture(GL_TEXTURE_2D, tex->m_tex_id);
+    char *buffer = nullptr;
+    size_t size;
+    Util::read_file(&buffer, &size, tex_file);
 
-    // set the texture wrapping/filtering options (on the currently bound texture object)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    int rval = create_tex_from_mem(tex, buffer, size, channel_count, bit_depth, texture_unit);
 
-    // load and generate the texture
-    int width, height, channel_count;
-    unsigned char *data = stbi_load(tex_file, &width, &height, &channel_count, 0);
-    if (data) {
-        GLenum format;
-        if (channel_count == 3) {
-            format = GL_RGB;
-        } else if (channel_count == 4) {
-            format = GL_RGBA;
-        } else {
-            nm_log::log(LOG_WARN, "unknown texture format, guessing GL_RGBA\n");
-            format = GL_RGBA;
-        }
+    delete buffer;
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    } else {
-        nm_log::log(LOG_ERROR, "failed to load texture: %s\n", tex_file);
-        stbi_image_free(data);
-
-        return EXIT_FAILURE;
-    }
-
-    stbi_image_free(data);
-
-    tex->m_texture_unit = texture_unit;
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    return EXIT_SUCCESS;
+    return rval;
 }
 
 int Texture::create_tex_from_mem(
@@ -943,7 +916,9 @@ int Texture::create_tex_from_mem(
 
 
     if (channel_count_ != (int) channel_count) {
-        nm_log::log(LOG_WARN, "specified channel count not equal to found channel count\n");
+        nm_log::log(LOG_WARN,
+                    "specified channel count (%d) not equal to found channel count (%d)\n",
+                    channel_count, channel_count_, tex->m_tex_id);
     }
 
     // keep on moving forward with assumed channel count since this is the size of the buffer

@@ -19,7 +19,7 @@ set(SOURCES
         src/system/manager.cpp src/system/manager.hpp
         src/system/texture_manager.cpp src/system/texture_manager.hpp
         src/util/nm_log.cpp src/util/nm_log.hpp
-        src/system/mesh_manager.cpp src/system/mesh_manager.hpp src/scene/light.cpp src/scene/light.hpp)
+        src/system/mesh_manager.cpp src/system/mesh_manager.hpp src/scene/light.cpp src/scene/light.hpp src/util/util.cpp src/util/util.hpp)
 
 # resource files
 add_subdirectory(embedder)

@@ -149,7 +149,9 @@ struct Texture {
     GLenum m_texture_unit;
 
     /** cannot be used with embedded resources */
-    static int create_tex_from_file(Texture *tex, const char *tex_file, GLenum texture_unit);
+    static int create_tex_from_file(
+            Texture *tex, const char *tex_file,
+            uint32_t channel_count, uint32_t bit_depth, uint32_t texture_unit);
 
     static int create_tex_from_mem(
             Texture *tex, const char *tex_data, size_t tex_len,

@@ -46,6 +46,8 @@ const TextureManager::TextureResource *TextureManager::TEXTURE_RESOURCES[] = {
                                     "../res/tex/castle_brick_07_8k_png/castle_brick_07_ao_8k.png"),
         new TextureResourceFromFile(TEXTURE_BRICK_8_ROUGH, 2, 16, 3,
                                     "../res/tex/castle_brick_07_8k_png/castle_brick_07_rough_8k.png"),
+        new TextureResourceFromFile(TEXTURE_BRICK_8_DISP, 2, 16, 3,
+                                    "../res/tex/castle_brick_07_8k_png/castle_brick_07_disp_8k.png"),
 };
 
 int32_t TextureManager::create_item(Texture *item, uint32_t id)

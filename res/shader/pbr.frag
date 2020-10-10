@@ -42,12 +42,14 @@ float geometry_schlick_ggx(float n_dot_v, float roughness);
    Uses Smith's method (which uses Schlick-GGX). */
 float geometry_smith(vec3 n, vec3 v, vec3 l, float roughness);
 
-/* Use displacement map to parallax map the texcoords to new ones. */
+/* Use displacement map to parallax map the texcoords to new ones.
+   Uses Parallax Occlusion Mapping.*/
 vec2 parallax_mapping(vec2 tex_coords, vec3 view_dir);
 
 void main()
 {
-    vec2 tex_coords = parallax_mapping(tex, tangent_pos_view);
+    vec3 v   = normalize(tangent_pos_view - tangent_frag_pos);// direction from point to camera
+    vec2 tex_coords = parallax_mapping(tex, v);
 
     // convert SRGB to linear RGB
     vec3 albedo = pow(texture(texture_diff, tex_coords).rgb, vec3(2.2));
@@ -59,7 +61,6 @@ void main()
     float ao = texture(texture_ao, tex_coords).r;
     float roughness = texture(texture_rough, tex_coords).r;
 
-    vec3 v   = normalize(tangent_pos_view - tangent_frag_pos);// direction from point to camera
     vec3 l_o = vec3(0.0);// total outgoing radiance of this fragment
     vec3 f_0 = vec3(0.04);// surface reflection at zero incidence (0.04 for dielectric)
     f_0      = mix(f_0, albedo, metallic);// lerp between f_0 and albedo based on metallic value
@@ -143,8 +144,36 @@ float geometry_smith(vec3 n, vec3 v, vec3 l, float roughness)
 
 vec2 parallax_mapping(vec2 tex_coords, vec3 view_dir)
 {
-    const float HEIGHT_SCALE = .1f;
-    float height = texture(texture_disp, tex_coords).r;
-    vec2 p = view_dir.xy / view_dir.z * (height * HEIGHT_SCALE);
-    return tex_coords - p;
+//    return tex_coords;
+    const int NUM_LAYERS = 64;
+    const float LAYER_DEPTH = 1.f / float(NUM_LAYERS);
+    const float HEIGHT_SCALE = .1f; // how accentuated the effects are
+
+    float current_layer_depth = 1.f; // the depth at which the texture is sampled
+    vec2 p = HEIGHT_SCALE * view_dir.xy / view_dir.z; // parallax offset vector
+    vec2 delta_tex_coords = p / float(NUM_LAYERS);
+
+    vec2  current_tex_coords      = tex_coords; // the tex coords at the current_layer_depth
+    float current_depth_map_value = texture(texture_disp, current_tex_coords).r;
+
+    while(current_layer_depth > current_depth_map_value) {
+        // shift texture coordinates along direction of p
+        current_tex_coords -= delta_tex_coords;
+        // get depthmap value at current texture coordinates
+        current_depth_map_value = texture(texture_disp, current_tex_coords).r;
+        current_layer_depth -= LAYER_DEPTH;
+    }
+
+    // get texture coordinates before collision (reverse operations)
+    vec2 prev_tex_coords = current_tex_coords + delta_tex_coords;
+    float before_depth = texture(texture_disp, prev_tex_coords).r - (current_layer_depth + LAYER_DEPTH);
+
+    // get depth after collision for linear interpolation
+    float after_depth  = current_depth_map_value - current_layer_depth;
+
+    // interpolation of texture coordinates
+    float weight = after_depth / (after_depth - before_depth);
+    vec2 final_tex_coords = prev_tex_coords * weight + current_tex_coords * (1.f - weight);
+
+    return final_tex_coords;
 }

@@ -18,6 +18,7 @@
 #define TEXTURE_BRICK_8_NORM  7
 #define TEXTURE_BRICK_8_AO    8
 #define TEXTURE_BRICK_8_ROUGH 9
+#define TEXTURE_BRICK_8_DISP 10
 
 /** Specified manually based on identifiers in CMakeLists. */
 extern const char test_png[];

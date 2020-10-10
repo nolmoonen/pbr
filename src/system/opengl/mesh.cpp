@@ -459,8 +459,8 @@ void Mesh::create_sphere(Mesh *mesh)
 {
     const uint32_t STACK_COUNT = 64;
     const uint32_t SECTOR_COUNT = 64;
-    const uint32_t HOR_TEXTURE_SCALE = 3;
-    const uint32_t VER_TEXTURE_SCALE = 2;
+    const uint32_t HOR_TEXTURE_SCALE = 2;
+    const uint32_t VER_TEXTURE_SCALE = 1;
 
     /** create vertices */
 

@@ -2,22 +2,23 @@
 
 #include "sphere.hpp"
 
-void Scene::render(
-        Camera *camera, ShaderManager *shader_manager, TextureManager *texture_manager, MeshManager *mesh_manager,
-        bool debug_mode)
+void Scene::render(bool debug_mode)
 {
     for (auto &object : objects) {
-        object->render(camera, shader_manager, texture_manager, mesh_manager, debug_mode);
+        object->render(debug_mode);
     }
 }
 
-Scene::Scene()
+Scene::Scene(
+        Renderer *renderer
+) :
+        renderer(renderer)
 {
-    objects.emplace_back((SceneObject *) new Sphere(this, glm::vec3(0.f)));
-    lights.emplace_back(new Light(this, glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f)));
-    lights.emplace_back(new Light(this, glm::vec3(-1.f, 1.f, +1.f), glm::vec3(1.f, 1.f, 1.f)));
-    lights.emplace_back(new Light(this, glm::vec3(+1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f)));
-    lights.emplace_back(new Light(this, glm::vec3(+1.f, 1.f, +1.f), glm::vec3(1.f, 1.f, 1.f)));
+    objects.emplace_back((SceneObject *) new Sphere(this, renderer, glm::vec3(0.f)));
+    lights.emplace_back(new Light(this, renderer, glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f)));
+    lights.emplace_back(new Light(this, renderer, glm::vec3(-1.f, 1.f, +1.f), glm::vec3(1.f, 1.f, 1.f)));
+    lights.emplace_back(new Light(this, renderer, glm::vec3(+1.f, 1.f, -1.f), glm::vec3(1.f, 1.f, 1.f)));
+    lights.emplace_back(new Light(this, renderer, glm::vec3(+1.f, 1.f, +1.f), glm::vec3(1.f, 1.f, 1.f)));
 
     // little bit awkward, but having Light a child of SceneObject allows for nice code elsewhere
     for (auto &light : lights) {

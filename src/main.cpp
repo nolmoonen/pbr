@@ -27,7 +27,7 @@ int main()
 
     Renderer renderer(&camera, &shader_manager, &texture_manager, &mesh_manager);
 
-    Scene scene;
+    Scene scene(&renderer);
 
     while (!window::get_instance().should_close()) {
         window::get_instance().get_input_handler()->pull_input();

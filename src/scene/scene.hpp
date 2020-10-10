@@ -15,17 +15,17 @@ class SceneObject;
 class Light;
 
 class Scene {
+private:
+    Renderer *renderer;
 public:
     std::vector<SceneObject *> objects;
     std::vector<Light *> lights;
 
-    Scene();
+    explicit Scene(Renderer *renderer);
 
     virtual ~Scene();
 
-    void render(
-            Camera *camera, ShaderManager *shader_manager, TextureManager *texture_manager, MeshManager *mesh_manager,
-            bool debug_mode);
+    void render(bool debug_mode);
 
     void update();
 

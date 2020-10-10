@@ -39,6 +39,15 @@ public:
     void toggle_draw_coordinate();
 
     void render_coordinates(glm::mat4 model_matrix);
+
+    void render_pbr(
+            uint32_t mesh_id, uint32_t material_id, std::vector<glm::vec3> positions,
+            std::vector<glm::vec3> colors, glm::mat4 model_matrix);
+
+    void render_default(uint32_t mesh_id, glm::mat4 model_matrix);
+
+    // todo ugly way to pass in lines struct
+    void render_lines(Lines *lines, glm::mat4 model_matrix);
 };
 
 

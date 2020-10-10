@@ -25,7 +25,7 @@ set(SOURCES
         src/system/mesh_manager.cpp
         src/util/nm_log.cpp
         src/util/util.cpp
-        src/util/nm_math.cpp)
+        src/util/nm_math.cpp src/system/material.cpp src/system/material.hpp)
 
 # resource files
 add_subdirectory(embedder)
@@ -39,11 +39,11 @@ embed(pbr_vert res/shader/pbr.vert)
 embed(pbr_frag res/shader/pbr.frag)
 
 embed(test_png res/tex/test.png)
-embed(brick_diff_png res/tex/castle_brick_07_1k_png/castle_brick_07_diff_1k.png)
-embed(brick_norm_png res/tex/castle_brick_07_1k_png/castle_brick_07_nor_1k.png)
-embed(brick_ao_png res/tex/castle_brick_07_1k_png/castle_brick_07_ao_1k.png)
-embed(brick_rough_png res/tex/castle_brick_07_1k_png/castle_brick_07_rough_1k.png)
-embed(brick_disp_png res/tex/castle_brick_07_1k_png/castle_brick_07_disp_1k.png)
+embed(brick_diff_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_diff_1k.png)
+embed(brick_norm_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_nor_1k.png)
+embed(brick_ao_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_ao_1k.png)
+embed(brick_rough_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_rough_1k.png)
+embed(brick_disp_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_disp_1k.png)
 
 # build glfw, glad, and glm before adding compile options
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)

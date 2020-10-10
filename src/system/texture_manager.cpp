@@ -32,22 +32,44 @@ int TextureManager::TextureResourceFromFile::create_texture(Texture *texture) co
 const TextureManager::TextureResource *TextureManager::TEXTURE_RESOURCES[] = {
         new TextureResourceFromMemory(TEXTURE_TEST, 4, 8, 0, test_png, &test_png_len),
 
-        new TextureResourceFromMemory(TEXTURE_BRICK_DIFF, 4, 16, 0, brick_diff_png, &brick_diff_png_len),
-        new TextureResourceFromMemory(TEXTURE_BRICK_NORM, 4, 16, 1, brick_norm_png, &brick_norm_png_len),
-        new TextureResourceFromMemory(TEXTURE_BRICK_AO, 2, 16, 2, brick_ao_png, &brick_ao_png_len),
-        new TextureResourceFromMemory(TEXTURE_BRICK_ROUGH, 2, 16, 3, brick_rough_png, &brick_rough_png_len),
-        new TextureResourceFromMemory(TEXTURE_BRICK_DISP, 2, 16, 4, brick_disp_png, &brick_disp_png_len),
+        new TextureResourceFromMemory(TEXTURE_BRICK_1_DIFF, 4, 16, 0, brick_diff_png, &brick_diff_png_len),
+        new TextureResourceFromMemory(TEXTURE_BRICK_1_NORM, 4, 16, 1, brick_norm_png, &brick_norm_png_len),
+        new TextureResourceFromMemory(TEXTURE_BRICK_1_AO, 2, 16, 2, brick_ao_png, &brick_ao_png_len),
+        new TextureResourceFromMemory(TEXTURE_BRICK_1_ROUGH, 2, 16, 3, brick_rough_png, &brick_rough_png_len),
+        new TextureResourceFromMemory(TEXTURE_BRICK_1_DISP, 2, 16, 4, brick_disp_png, &brick_disp_png_len),
+
+        new TextureResourceFromFile(TEXTURE_BRICK_2_DIFF, 4, 16, 0,
+                                    "../res/tex/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_diff_2k.png"),
+        new TextureResourceFromFile(TEXTURE_BRICK_2_NORM, 4, 16, 1,
+                                    "../res/tex/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_nor_2k.png"),
+        new TextureResourceFromFile(TEXTURE_BRICK_2_AO, 4, 16, 2, // NB: intentional difference with {TEXTURE_BRICK_AO}
+                                    "../res/tex/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_ao_2k.png"),
+        new TextureResourceFromFile(TEXTURE_BRICK_2_ROUGH, 2, 16, 3,
+                                    "../res/tex/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_rough_2k.png"),
+        new TextureResourceFromFile(TEXTURE_BRICK_2_DISP, 2, 16, 4,
+                                    "../res/tex/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_disp_2k.png"),
+
+        new TextureResourceFromFile(TEXTURE_BRICK_4_DIFF, 4, 16, 0,
+                                    "../res/tex/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_diff_4k.png"),
+        new TextureResourceFromFile(TEXTURE_BRICK_4_NORM, 4, 16, 1,
+                                    "../res/tex/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_nor_4k.png"),
+        new TextureResourceFromFile(TEXTURE_BRICK_4_AO, 4, 16, 2, // NB: intentional difference with {TEXTURE_BRICK_AO}
+                                    "../res/tex/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_ao_4k.png"),
+        new TextureResourceFromFile(TEXTURE_BRICK_4_ROUGH, 2, 16, 3,
+                                    "../res/tex/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_rough_4k.png"),
+        new TextureResourceFromFile(TEXTURE_BRICK_4_DISP, 2, 16, 4,
+                                    "../res/tex/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_disp_4k.png"),
 
         new TextureResourceFromFile(TEXTURE_BRICK_8_DIFF, 4, 16, 0,
-                                    "../res/tex/castle_brick_07_8k_png/castle_brick_07_diff_8k.png"),
+                                    "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_diff_8k.png"),
         new TextureResourceFromFile(TEXTURE_BRICK_8_NORM, 4, 16, 1,
-                                    "../res/tex/castle_brick_07_8k_png/castle_brick_07_nor_8k.png"),
+                                    "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_nor_8k.png"),
         new TextureResourceFromFile(TEXTURE_BRICK_8_AO, 4, 16, 2, // NB: intentional difference with {TEXTURE_BRICK_AO}
-                                    "../res/tex/castle_brick_07_8k_png/castle_brick_07_ao_8k.png"),
+                                    "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_ao_8k.png"),
         new TextureResourceFromFile(TEXTURE_BRICK_8_ROUGH, 2, 16, 3,
-                                    "../res/tex/castle_brick_07_8k_png/castle_brick_07_rough_8k.png"),
-        new TextureResourceFromFile(TEXTURE_BRICK_8_DISP, 2, 16, 3,
-                                    "../res/tex/castle_brick_07_8k_png/castle_brick_07_disp_8k.png"),
+                                    "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_rough_8k.png"),
+        new TextureResourceFromFile(TEXTURE_BRICK_8_DISP, 2, 16, 4,
+                                    "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_disp_8k.png"),
 };
 
 int32_t TextureManager::create_item(Texture *item, uint32_t id)

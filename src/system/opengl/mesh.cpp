@@ -501,7 +501,7 @@ void Mesh::create_sphere(Mesh *mesh)
             tex_vertices[vertex] = glm::vec2(s, t);
 
             // tangent: (unitized) derivative w.r.t. theta (https://computergraphics.stackexchange.com/a/5499)
-            tangent_vertices[vertex] = glm::vec3(-sin_theta, 0.f, cos_theta);
+            tangent_vertices[vertex] = glm::vec3(sin_theta, 0.f, -cos_theta);
 
             // bitangent: (unitized) derivative w.r.t. phi (a little bit uglier)
             bitangent_vertices[vertex] = glm::normalize(glm::vec3(-y * cos_theta, xz, -y * sin_theta));

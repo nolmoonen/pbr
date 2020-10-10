@@ -9,6 +9,7 @@ uniform sampler2D texture_diff;
 uniform sampler2D texture_norm;
 uniform sampler2D texture_ao;
 uniform sampler2D texture_rough;
+uniform sampler2D texture_disp;
 
 uniform vec3 color_light[NUM_LIGHTS];
 
@@ -41,30 +42,35 @@ float geometry_schlick_ggx(float n_dot_v, float roughness);
    Uses Smith's method (which uses Schlick-GGX). */
 float geometry_smith(vec3 n, vec3 v, vec3 l, float roughness);
 
+/* Use displacement map to parallax map the texcoords to new ones. */
+vec2 parallax_mapping(vec2 tex_coords, vec3 view_dir);
+
 void main()
 {
+    vec2 tex_coords = parallax_mapping(tex, tangent_pos_view);
+
     // convert SRGB to linear RGB
-    vec3 albedo = pow(texture(texture_diff, tex).rgb, vec3(2.2));
+    vec3 albedo = pow(texture(texture_diff, tex_coords).rgb, vec3(2.2));
 
     // obtain normal from normal map in range [0, 1], transform to [-1, 1] ({normal} is in tangent space)
-    vec3 normal = texture(texture_norm, tex).rgb;
+    vec3 normal = texture(texture_norm, tex_coords).rgb;
     normal = normalize(normal * 2.0 - 1.0);
 
-    float ao = texture(texture_ao, tex).r;
-    float roughness = texture(texture_rough, tex).r;
+    float ao = texture(texture_ao, tex_coords).r;
+    float roughness = texture(texture_rough, tex_coords).r;
 
-    vec3 v   = normalize(tangent_pos_view - tangent_frag_pos); // direction from point to camera
-    vec3 l_o = vec3(0.0);  // total outgoing radiance of this fragment
-    vec3 f_0 = vec3(0.04); // surface reflection at zero incidence (0.04 for dielectric)
-    f_0      = mix(f_0, albedo, metallic); // lerp between f_0 and albedo based on metallic value
+    vec3 v   = normalize(tangent_pos_view - tangent_frag_pos);// direction from point to camera
+    vec3 l_o = vec3(0.0);// total outgoing radiance of this fragment
+    vec3 f_0 = vec3(0.04);// surface reflection at zero incidence (0.04 for dielectric)
+    f_0      = mix(f_0, albedo, metallic);// lerp between f_0 and albedo based on metallic value
 
     for (int i = 0; i < NUM_LIGHTS; i++) {
-        vec3 l = normalize(tangent_pos_light[i] - tangent_frag_pos); // direction from point to light
-        vec3 h = normalize(v + l);                                // halfway vector
+        vec3 l = normalize(tangent_pos_light[i] - tangent_frag_pos);// direction from point to light
+        vec3 h = normalize(v + l);// halfway vector
 
         // calculate light attenuation
-        float distance    = length(tangent_pos_light[i] - tangent_frag_pos); // distance towards light
-        float attenuation = 1.0 / (distance * distance); // light attenuation is inversely squarely correlated with dist
+        float distance    = length(tangent_pos_light[i] - tangent_frag_pos);// distance towards light
+        float attenuation = 1.0 / (distance * distance);// light attenuation is inversely squarely correlated with dist
         vec3 radiance     = color_light[i] * attenuation;
 
         // compute approximations
@@ -72,9 +78,9 @@ void main()
         float g   = geometry_smith(normal, v, l, roughness);
         vec3 f    = fresnel_schlick(clamp(dot(h, v), 0.0, 1.0), f_0);
 
-        vec3 k_s = f;               // specular contribution determined by fresnel approximation
-        vec3 k_d = vec3(1.0) - k_s; // diffuse contribution by law of energy conservation
-        k_d *= 1.0 - metallic;      // reduce diffuse contribution for metallic surfaces
+        vec3 k_s = f;// specular contribution determined by fresnel approximation
+        vec3 k_d = vec3(1.0) - k_s;// diffuse contribution by law of energy conservation
+        k_d *= 1.0 - metallic;// reduce diffuse contribution for metallic surfaces
 
         // plug in equation and add to outgoing radiance l_o
         vec3 numerator    = ndf * g * f;
@@ -85,7 +91,7 @@ void main()
         l_o += (k_d * albedo / M_PI + specular) * radiance * n_dot_l;
     }
 
-    vec3 ambient = vec3(0.03) * albedo * ao; // improvise ambient intensity
+    vec3 ambient = vec3(0.03) * albedo * ao;// improvise ambient intensity
     vec3 color = ambient + l_o;
 
     // reinhard tone mapping
@@ -133,4 +139,12 @@ float geometry_smith(vec3 n, vec3 v, vec3 l, float roughness)
     float ggx1  = geometry_schlick_ggx(n_dot_l, roughness);
 
     return ggx1 * ggx2;
+}
+
+vec2 parallax_mapping(vec2 tex_coords, vec3 view_dir)
+{
+    const float HEIGHT_SCALE = .1f;
+    float height = texture(texture_disp, tex_coords).r;
+    vec2 p = view_dir.xy / view_dir.z * (height * HEIGHT_SCALE);
+    return tex_coords - p;
 }

@@ -36,6 +36,7 @@ const TextureManager::TextureResource *TextureManager::TEXTURE_RESOURCES[] = {
         new TextureResourceFromMemory(TEXTURE_BRICK_NORM, 4, 16, 1, brick_norm_png, &brick_norm_png_len),
         new TextureResourceFromMemory(TEXTURE_BRICK_AO, 2, 16, 2, brick_ao_png, &brick_ao_png_len),
         new TextureResourceFromMemory(TEXTURE_BRICK_ROUGH, 2, 16, 3, brick_rough_png, &brick_rough_png_len),
+        new TextureResourceFromMemory(TEXTURE_BRICK_DISP, 2, 16, 4, brick_disp_png, &brick_disp_png_len),
 
         new TextureResourceFromFile(TEXTURE_BRICK_8_DIFF, 4, 16, 0,
                                     "../res/tex/castle_brick_07_8k_png/castle_brick_07_diff_8k.png"),

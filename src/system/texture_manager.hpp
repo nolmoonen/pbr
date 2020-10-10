@@ -12,11 +12,12 @@
 #define TEXTURE_BRICK_NORM  2
 #define TEXTURE_BRICK_AO    3
 #define TEXTURE_BRICK_ROUGH 4
+#define TEXTURE_BRICK_DISP 5
 
-#define TEXTURE_BRICK_8_DIFF  5
-#define TEXTURE_BRICK_8_NORM  6
-#define TEXTURE_BRICK_8_AO    7
-#define TEXTURE_BRICK_8_ROUGH 8
+#define TEXTURE_BRICK_8_DIFF  6
+#define TEXTURE_BRICK_8_NORM  7
+#define TEXTURE_BRICK_8_AO    8
+#define TEXTURE_BRICK_8_ROUGH 9
 
 /** Specified manually based on identifiers in CMakeLists. */
 extern const char test_png[];
@@ -33,6 +34,9 @@ extern const size_t brick_ao_png_len;
 
 extern const char brick_rough_png[];
 extern const size_t brick_rough_png_len;
+
+extern const char brick_disp_png[];
+extern const size_t brick_disp_png_len;
 
 class TextureManager : public Manager<Texture> {
 private:

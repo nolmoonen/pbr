@@ -90,8 +90,10 @@ void Lines::create_line(Lines *line, glm::vec3 dir, glm::vec3 color)
 
 void Lines::create_sphere(Lines *lines)
 {
+    // NB: code is mirrored from {Mesh:create_sphere}
     const uint32_t STACK_COUNT = 64;
     const uint32_t SECTOR_COUNT = 64;
+    const float SCALE = 25.f;
 
     const uint32_t SPHERE_VERTICES = (STACK_COUNT + 1) * (SECTOR_COUNT + 1);
     // 1 for vertex, 1 for normal, 1 for tangent, 1 for bitangent
@@ -121,13 +123,13 @@ void Lines::create_sphere(Lines *lines)
             glm::vec3 geom = glm::vec3(x, y, z); // vertex
             geom_vertices[vertex + 0] = geom;
             color_vertices[vertex + 0] = glm::vec3(1.f);
-            geom_vertices[vertex + 1] = geom + geom * .1f;
+            geom_vertices[vertex + 1] = geom + geom / SCALE;
             color_vertices[vertex + 1] = glm::vec3(0.f, 0.f, 1.f);
-            glm::vec3 tangent = glm::vec3(-sin_theta, 0.f, cos_theta);
-            geom_vertices[vertex + 2] = geom + tangent * .1f;
+            glm::vec3 tangent = glm::vec3(sin_theta, 0.f, -cos_theta);
+            geom_vertices[vertex + 2] = geom + tangent / SCALE;
             color_vertices[vertex + 2] = glm::vec3(1.f, 0.f, 0.f);
             glm::vec3 bitangent = glm::normalize(glm::vec3(-y * cos_theta, xz, -y * sin_theta));
-            geom_vertices[vertex + 3] = geom + bitangent * .1f;
+            geom_vertices[vertex + 3] = geom + bitangent / SCALE;
             color_vertices[vertex + 3] = glm::vec3(0.f, 1.f, 0.f);
 
             indices[index++] = vertex + 0;

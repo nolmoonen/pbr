@@ -26,7 +26,9 @@ struct Mesh {
      * If {@code EXIT_SUCCESS} is returned, a call to {@code delete_mesh} is required
      * before the executable terminates.
      *
-     * Shaders assume that normals are unitized!
+     * Normals, tangents, and bitangents should be normalized.
+     * Tangent should point to positive U texture coordinate.
+     * Bitangent should point to positive V texture coordinate.
      */
     static void create_mesh(
             Mesh *t_mesh,

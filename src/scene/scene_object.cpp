@@ -10,9 +10,7 @@ SceneObject::SceneObject(
 
 void SceneObject::render(bool debug_mode)
 {
-    if (debug_mode || selected) {
-        renderer->render_lines(
-                PRIMITIVE_COORDINATE_SYSTEM,
-                glm::translate(glm::identity<glm::mat4>(), position));
+    if (selected) {
+        renderer->render_widget(glm::translate(glm::identity<glm::mat4>(), position));
     }
 }

@@ -15,7 +15,7 @@
 class Camera {
 private:
     constexpr static const float MIN_PITCH = -0.49f * M_PI;
-    constexpr static const float MAX_PITCH = +0.00f * M_PI;
+    constexpr static const float MAX_PITCH = +0.49f * M_PI;
     constexpr static const float MAX_ZOOM = 32.f;
     constexpr static const float MIN_ZOOM = 0.1f;
 

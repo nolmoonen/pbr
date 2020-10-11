@@ -9,6 +9,7 @@ inline Manager<Primitive>::~Manager<Primitive>() = default;
 
 const std::map<uint32_t, PrimitiveManager::PrimitiveResource> PrimitiveManager::PRIMITIVE_RESOURCES = {
         {PRIMITIVE_CONE,              {&Primitive::create_cone}},
+        {PRIMITIVE_CYLINDER,          {&Primitive::create_cylinder}},
         {PRIMITIVE_CUBE,              {&FullPrimitive::create_cube}},
         {PRIMITIVE_SKYBOX,            {&FullPrimitive::create_skybox}},
         {PRIMITIVE_SPHERE,            {&FullPrimitive::create_sphere}},

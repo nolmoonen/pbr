@@ -41,6 +41,8 @@ public:
     void render_default(uint32_t mesh_id, glm::vec3 color, glm::mat4 model_matrix);
 
     void render_lines(uint32_t primitive_id, glm::mat4 model_matrix);
+
+    void render_widget(glm::mat4 model_matrix);
 };
 
 

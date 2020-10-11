@@ -23,7 +23,14 @@ public:
 
     virtual void render_primitive();
 
+    /**
+     * Helper functions.
+     */
+
+    /** Creates 1x2x1 cone centered at (0,0,0). */
     static Primitive *create_cone();
+
+    static Primitive *create_cylinder();
 };
 
 #endif //SYSTEM_PRIMITIVE_HPP

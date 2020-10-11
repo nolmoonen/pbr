@@ -95,3 +95,37 @@ void Renderer::render_lines(uint32_t primitive_id, glm::mat4 model_matrix)
     primitive_manager->get(primitive_id)->render_primitive();
     ShaderProgram::unuse_shader_program();
 }
+
+void Renderer::render_widget(glm::mat4 model_matrix)
+{
+    const float CONE_SCALE = 20.f;           // how large the cone is
+    const float CYLINDER_LENGTH = 1.f;       // how long the cylinder should be (cone placement is adjusted accordingly)
+    const float CYLINDER_WIDTH_SCALE = 45.f; // the girth of the cylinder
+
+    // x-axis
+    render_default(PRIMITIVE_CONE, glm::vec3(1.f, 0.f, 0.f),
+                   glm::rotate(glm::scale(glm::translate(model_matrix, glm::vec3(CYLINDER_LENGTH, 0.f, 0.f)),
+                                          glm::vec3(1.f / CONE_SCALE)), -(float) M_PI_2, glm::vec3(0.f, 0.f, 1.f)));
+    render_default(PRIMITIVE_CYLINDER, glm::vec3(1.f, 0.f, 0.f),
+                   glm::translate(glm::scale(glm::rotate(model_matrix, -(float) M_PI_2, glm::vec3(0.f, 0.f, 1.f)),
+                                             glm::vec3(1.f / CYLINDER_WIDTH_SCALE, CYLINDER_LENGTH / 2.f,
+                                                       1.f / CYLINDER_WIDTH_SCALE)), glm::vec3(0.f, 1.f, 0.f)));
+
+    // y-axis
+    render_default(PRIMITIVE_CONE, glm::vec3(0.f, 1.f, 0.f),
+                   glm::scale(glm::translate(model_matrix, glm::vec3(0.f, CYLINDER_LENGTH, 0.f)),
+                              glm::vec3(1.f / CONE_SCALE)));
+    render_default(PRIMITIVE_CYLINDER, glm::vec3(0.f, 1.f, 0.f),
+                   glm::translate(glm::scale(model_matrix, glm::vec3(1.f / CYLINDER_WIDTH_SCALE, CYLINDER_LENGTH / 2.f,
+                                                                     1.f / CYLINDER_WIDTH_SCALE)),
+                                  glm::vec3(0.f, 1.f, 0.f)));
+
+    // z-axis
+    render_default(PRIMITIVE_CONE, glm::vec3(0.f, 0.f, 1.f),
+                   glm::rotate(glm::scale(glm::translate(model_matrix, glm::vec3(0.f, 0.f, CYLINDER_LENGTH)),
+                                          glm::vec3(1.f / CONE_SCALE)), +(float) M_PI_2, glm::vec3(1.f, 0.f, 0.f)));
+    render_default(PRIMITIVE_CYLINDER, glm::vec3(0.f, 0.f, 1.f),
+                   glm::translate(glm::scale(glm::rotate(model_matrix, (float) M_PI_2, glm::vec3(1.f, 0.f, 0.f)),
+                                             glm::vec3(1.f / CYLINDER_WIDTH_SCALE, CYLINDER_LENGTH / 2.f,
+                                                       1.f / CYLINDER_WIDTH_SCALE)), glm::vec3(0.f, 1.f, 0.f)));
+}

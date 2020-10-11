@@ -7,6 +7,7 @@
 enum PrimitiveTypes {
     /** Primitives */
     PRIMITIVE_CONE,
+    PRIMITIVE_CYLINDER,
     /** FullPrimitives */
     PRIMITIVE_SKYBOX,
     PRIMITIVE_CUBE,

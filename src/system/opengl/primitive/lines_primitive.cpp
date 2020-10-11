@@ -1,63 +1,47 @@
-#include "lines.hpp"
+#include "lines_primitive.hpp"
 
-void Lines::create_lines(
-        Lines *lines,
+#include <cmath>
+
+#include <glm/glm.hpp>
+
+void LinesPrimitive::create(
         glm::vec3 *geom_vertices, glm::vec3 *color_vertices, uint32_t vertex_count,
-        GLushort *indices, uint32_t index_count
-)
+        GLushort *indices, uint32_t p_index_count)
 {
-    // create VAO
-    glGenVertexArrays(1, &lines->m_vertex_array);
-    glBindVertexArray(lines->m_vertex_array);
+    Primitive::create_primitive(geom_vertices, vertex_count, indices, p_index_count);
 
-    // create geometric vertex VBO
-    glGenBuffers(1, &lines->m_buffer_vertex_geom);
-    glBindBuffer(GL_ARRAY_BUFFER, lines->m_buffer_vertex_geom);
-    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(glm::vec3), geom_vertices, GL_STATIC_DRAW);
-    // index = 0, size = 3
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *) 0);
+    glBindVertexArray(vertex_array);
 
     // create vertex color VBO
-    glGenBuffers(1, &lines->m_buffer_vertex_color);
-    glBindBuffer(GL_ARRAY_BUFFER, lines->m_buffer_vertex_color);
+    glGenBuffers(1, &buffer_vertex_color);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_vertex_color);
     glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(glm::vec3), color_vertices, GL_STATIC_DRAW);
     // index = 1, size = 3
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void *) 0);
 
-    // create index VBO
-    glGenBuffers(1, &lines->m_buffer_index);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, lines->m_buffer_index);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index_count * sizeof(GLushort), indices, GL_STATIC_DRAW);
-
     glBindVertexArray(0);
-
-    lines->m_index_count = index_count;
 }
 
-void Lines::delete_lines(Lines *lines)
+void LinesPrimitive::delete_primitive()
 {
-    glDeleteBuffers(1, &lines->m_buffer_index);
-    lines->m_buffer_index = 0;
-    glDeleteBuffers(1, &lines->m_buffer_vertex_color);
-    lines->m_buffer_vertex_color = 0;
-    glDeleteBuffers(1, &lines->m_buffer_vertex_geom);
-    lines->m_buffer_vertex_geom = 0;
+    glDeleteBuffers(1, &buffer_vertex_color);
+    buffer_vertex_color = 0;
 
-    glDeleteVertexArrays(1, &lines->m_vertex_array);
+    Primitive::delete_primitive();
 }
 
-void Lines::render_lines(Lines *lines)
+void LinesPrimitive::render_primitive()
 {
-    glBindVertexArray(lines->m_vertex_array);
+    // fully override behavior to render lines
+    glBindVertexArray(vertex_array);
 
-    glDrawElements(GL_LINES, lines->m_index_count, GL_UNSIGNED_SHORT, (void *) 0);
+    glDrawElements(GL_LINES, index_count, GL_UNSIGNED_SHORT, (void *) 0);
 
     glBindVertexArray(0);
 }
 
-void Lines::create_coordinate_axes(Lines *lines)
+Primitive *LinesPrimitive::create_coordinate_axes()
 {
     const float SIZE = 5.f;
     uint32_t vertex_count = 3 * 2; // three axes
@@ -74,21 +58,14 @@ void Lines::create_coordinate_axes(Lines *lines)
     uint32_t index_count = 3 * 2; // three axes
     GLushort indices[] = {0, 1, 2, 3, 4, 5};
 
-    create_lines(lines, geom_vertices, color_vertices, vertex_count, indices, index_count);
+    auto *lines_primitive = new LinesPrimitive;
+    lines_primitive->create(
+            geom_vertices, color_vertices, vertex_count,
+            indices, index_count);
+    return (Primitive *) lines_primitive;
 }
 
-void Lines::create_line(Lines *line, glm::vec3 dir, glm::vec3 color)
-{
-    uint32_t vertex_count = 2;
-    glm::vec3 geom_vertices[] = {glm::vec3(0.f), dir};
-    glm::vec3 color_vertices[] = {color, color};
-    uint32_t index_count = 2;
-    GLushort indices[] = {0, 1};
-
-    create_lines(line, geom_vertices, color_vertices, vertex_count, indices, index_count);
-}
-
-void Lines::create_sphere(Lines *lines)
+Primitive *LinesPrimitive::create_sphere()
 {
     // NB: code is mirrored from {Mesh:create_sphere}
     const uint32_t STACK_COUNT = 64;
@@ -142,5 +119,9 @@ void Lines::create_sphere(Lines *lines)
         }
     }
 
-    create_lines(lines, geom_vertices, color_vertices, VERTEX_COUNT, indices, INDEX_COUNT);
+    auto *lines_primitive = new LinesPrimitive;
+    lines_primitive->create(
+            geom_vertices, color_vertices, VERTEX_COUNT,
+            indices, INDEX_COUNT);
+    return (Primitive *) lines_primitive;
 }

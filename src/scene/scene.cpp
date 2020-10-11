@@ -40,6 +40,12 @@ Scene::~Scene()
 
 void Scene::cast_ray(glm::vec3 origin, glm::vec3 direction)
 {
+    // disable selection for all
+    for (auto &object : objects) {
+        object->selected = false;
+    }
+
+    // find closest intersection
     SceneObject *closest = nullptr;
     float closest_t = std::numeric_limits<float>::max();
     for (auto &object : objects) {
@@ -51,5 +57,6 @@ void Scene::cast_ray(glm::vec3 origin, glm::vec3 direction)
         }
     }
 
+    // enable selection for closest, if one is found
     if (closest) closest->selected = true;
 }

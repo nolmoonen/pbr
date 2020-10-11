@@ -15,8 +15,8 @@ set(SOURCES
         src/system/manager/shader_manager.cpp
         src/system/manager/texture_manager.cpp
         src/system/opengl/primitive/full_primitive.cpp
+        src/system/opengl/primitive/lines_primitive.cpp
         src/system/opengl/primitive/primitive.cpp
-        src/system/opengl/lines.cpp
         src/system/opengl/shader.cpp
         src/system/opengl/texture.cpp
         src/system/camera.cpp

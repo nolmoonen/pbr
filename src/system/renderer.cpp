@@ -3,19 +3,19 @@
 
 Renderer::Renderer(
         Camera *p_camera, ShaderManager *p_shader_manager, TextureManager *p_texture_manager,
-        PrimitiveManager *p_mesh_manager
+        PrimitiveManager *p_primitive_manager
 ) :
         camera(p_camera), shader_manager(p_shader_manager), texture_manager(p_texture_manager),
-        mesh_manager(p_mesh_manager)
-{
-    Lines::create_coordinate_axes(&coordinate_mesh);
-}
+        primitive_manager(p_primitive_manager)
+{}
 
 void Renderer::render(Scene *scene)
 {
     glClear((uint32_t) GL_COLOR_BUFFER_BIT | (uint32_t) GL_DEPTH_BUFFER_BIT);
 
-    if (debug_mode) render_coordinates(glm::identity<glm::mat4>());
+    if (debug_mode) {
+        render_lines(PRIMITIVE_COORDINATE_SYSTEM, glm::identity<glm::mat4>());
+    }
 
     scene->render(debug_mode);
 
@@ -25,22 +25,6 @@ void Renderer::render(Scene *scene)
 void Renderer::toggle_draw_coordinate()
 {
     debug_mode = !debug_mode;
-}
-
-Renderer::~Renderer()
-{
-    Lines::delete_lines(&coordinate_mesh);
-}
-
-void Renderer::render_coordinates(glm::mat4 model_matrix)
-{
-    ShaderProgram *program = shader_manager->get(SHADER_LINES);
-    ShaderProgram::use_shader_program(program);
-    ShaderProgram::set_mat4(program, "model_matrix", model_matrix);
-    ShaderProgram::set_mat4(program, "view_matrix", camera->get_view_matrix());
-    ShaderProgram::set_mat4(program, "projection_matrix", camera->get_proj_matrix());
-    Lines::render_lines(&coordinate_mesh);
-    ShaderProgram::unuse_shader_program();
 }
 
 void Renderer::render_pbr(
@@ -79,7 +63,7 @@ void Renderer::render_pbr(
     Texture::bind_tex(texture_manager->get(material.ambient_occlusion));
     Texture::bind_tex(texture_manager->get(material.roughness));
     Texture::bind_tex(texture_manager->get(material.displacement));
-    mesh_manager->get(mesh_id)->render_primitive();
+    primitive_manager->get(mesh_id)->render_primitive();
     Texture::unbind_tex();
     ShaderProgram::unuse_shader_program();
 }
@@ -96,18 +80,18 @@ void Renderer::render_default(uint32_t mesh_id, glm::vec3 color, glm::mat4 model
 
     ShaderProgram::set_vec3(program, "color", color);
 
-    mesh_manager->get(mesh_id)->render_primitive();
+    primitive_manager->get(mesh_id)->render_primitive();
 
     ShaderProgram::unuse_shader_program();
 }
 
-void Renderer::render_lines(Lines *lines, glm::mat4 model_matrix)
+void Renderer::render_lines(uint32_t primitive_id, glm::mat4 model_matrix)
 {
     ShaderProgram *program = shader_manager->get(SHADER_LINES);
     ShaderProgram::use_shader_program(program);
     ShaderProgram::set_mat4(program, "model_matrix", model_matrix);
     ShaderProgram::set_mat4(program, "view_matrix", camera->get_view_matrix());
     ShaderProgram::set_mat4(program, "projection_matrix", camera->get_proj_matrix());
-    Lines::render_lines(lines);
+    primitive_manager->get(primitive_id)->render_primitive();
     ShaderProgram::unuse_shader_program();
 }

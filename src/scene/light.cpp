@@ -11,6 +11,8 @@ Light::Light(
 
 void Light::render(bool debug_mode)
 {
+    SceneObject::render(debug_mode);
+
     renderer->render_default(
             PRIMITIVE_SPHERE,
             color,

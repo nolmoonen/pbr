@@ -2,12 +2,9 @@
 #define PBR_SPHERE_HPP
 
 #include "scene_object.hpp"
-#include "../system/opengl/lines.hpp"
 #include "scene.hpp"
 
 class Sphere : public SceneObject {
-private:
-    Lines normals{}; // todo debug
 public:
     Sphere(Scene *scene, Renderer *renderer, glm::vec3 position);
 

@@ -18,14 +18,14 @@ int main()
 
     ShaderManager shader_manager;
     TextureManager texture_manager;
-    PrimitiveManager mesh_manager;
+    PrimitiveManager primitive_manager;
 
     Camera camera(
             (float) window::get_instance().get_input_handler()->get_size_x() /
             (float) window::get_instance().get_input_handler()->get_size_y(),
             glm::radians(90.f), .1f, 1000.f);
 
-    Renderer renderer(&camera, &shader_manager, &texture_manager, &mesh_manager);
+    Renderer renderer(&camera, &shader_manager, &texture_manager, &primitive_manager);
 
     Scene scene(&renderer);
 
@@ -42,7 +42,7 @@ int main()
         // allow managers to deallocate objects not used in last frame
         shader_manager.make_space();
         texture_manager.make_space();
-        mesh_manager.make_space();
+        primitive_manager.make_space();
     }
 
     window::get_instance().cleanup();

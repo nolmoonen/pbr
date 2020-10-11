@@ -8,7 +8,6 @@
 #include "../system/manager/shader_manager.hpp"
 #include "../system/manager/texture_manager.hpp"
 #include "../system/manager/primitive_manager.hpp"
-#include "../system/opengl/lines.hpp"
 
 class SceneObject;
 

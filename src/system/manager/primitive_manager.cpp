@@ -1,16 +1,19 @@
 #include "primitive_manager.hpp"
 
 #include "../opengl/primitive/full_primitive.hpp"
+#include "../opengl/primitive/lines_primitive.hpp"
 
 // provide a default destructor for the base class
 template<>
 inline Manager<Primitive>::~Manager<Primitive>() = default;
 
 const std::map<uint32_t, PrimitiveManager::PrimitiveResource> PrimitiveManager::PRIMITIVE_RESOURCES = {
-        {PRIMITIVE_CONE,   {&Primitive::create_cone}},
-        {PRIMITIVE_CUBE,   {&FullPrimitive::create_cube}},
-        {PRIMITIVE_SKYBOX, {&FullPrimitive::create_skybox}},
-        {PRIMITIVE_SPHERE, {&FullPrimitive::create_sphere}}
+        {PRIMITIVE_CONE,              {&Primitive::create_cone}},
+        {PRIMITIVE_CUBE,              {&FullPrimitive::create_cube}},
+        {PRIMITIVE_SKYBOX,            {&FullPrimitive::create_skybox}},
+        {PRIMITIVE_SPHERE,            {&FullPrimitive::create_sphere}},
+        {PRIMITIVE_COORDINATE_SYSTEM, {&LinesPrimitive::create_coordinate_axes}},
+        {PRIMITIVE_SPHERE_NORMALS,    {&LinesPrimitive::create_sphere}}
 };
 
 int32_t PrimitiveManager::create_item(Primitive **item, uint32_t id)

@@ -5,12 +5,15 @@
 #include "../opengl/primitive/primitive.hpp"
 
 enum PrimitiveTypes {
-    /** Primitive */
+    /** Primitives */
     PRIMITIVE_CONE,
     /** FullPrimitives */
     PRIMITIVE_SKYBOX,
     PRIMITIVE_CUBE,
-    PRIMITIVE_SPHERE
+    PRIMITIVE_SPHERE,
+    /** LinePrimitives */
+    PRIMITIVE_COORDINATE_SYSTEM,
+    PRIMITIVE_SPHERE_NORMALS
 };
 
 class PrimitiveManager : public Manager<Primitive> {

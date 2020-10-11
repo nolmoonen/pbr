@@ -8,15 +8,11 @@ Sphere::Sphere(
         Scene *scene, Renderer *renderer, glm::vec3 position
 ) :
         SceneObject(scene, renderer, position)
-{
-    Lines::create_sphere(&normals); // todo debug
-}
+{}
 
 void Sphere::render(bool debug_mode)
 {
-    if (debug_mode) {
-        renderer->render_lines(&normals, glm::identity<glm::mat4>());
-    }
+    SceneObject::render(debug_mode);
 
     std::vector<glm::vec3> positions;
     std::vector<glm::vec3> colors;

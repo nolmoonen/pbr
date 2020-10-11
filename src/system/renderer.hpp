@@ -11,34 +11,28 @@
 #include "manager/texture_manager.hpp"
 #include "manager/primitive_manager.hpp"
 #include "../scene/scene.hpp"
-#include "opengl/lines.hpp"
 
 class Renderer {
 private:
     Camera *camera;
     ShaderManager *shader_manager;
     TextureManager *texture_manager;
-    PrimitiveManager *mesh_manager;
+    PrimitiveManager *primitive_manager;
 
     /** Whether the coordinate system should be drawn. */
     bool debug_mode = false;
-
-    /** Contains the mesh for the coordinate system. */
-    Lines coordinate_mesh{};
 public:
 
     Renderer(
             Camera *p_camera, ShaderManager *p_shader_manager, TextureManager *p_texture_manager,
-            PrimitiveManager *p_mesh_manager
+            PrimitiveManager *p_primitive_manager
     );
 
-    ~Renderer();
+    ~Renderer() = default;
 
     void render(Scene *scene);
 
     void toggle_draw_coordinate();
-
-    void render_coordinates(glm::mat4 model_matrix);
 
     void render_pbr(
             uint32_t mesh_id, uint32_t material_id, std::vector<glm::vec3> positions,
@@ -46,8 +40,7 @@ public:
 
     void render_default(uint32_t mesh_id, glm::vec3 color, glm::mat4 model_matrix);
 
-    // todo ugly way to pass in lines struct
-    void render_lines(Lines *lines, glm::mat4 model_matrix);
+    void render_lines(uint32_t primitive_id, glm::mat4 model_matrix);
 };
 
 

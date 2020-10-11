@@ -18,7 +18,7 @@ public:
 
     SceneObject(Scene *scene, Renderer *renderer, glm::vec3 position);
 
-    virtual ~SceneObject();
+    virtual ~SceneObject() = default;
 
     virtual void render(bool debug_mode);
 

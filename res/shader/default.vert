@@ -8,7 +8,6 @@ uniform mat4 projection_matrix;
 
 layout (location = 0) in vec3 in_position;
 
-
 void main(){
     gl_Position = projection_matrix * view_matrix * model_matrix * vec4(in_position, 1);
 }

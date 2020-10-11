@@ -11,12 +11,14 @@ Light::Light(
 
 void Light::render(bool debug_mode)
 {
-    renderer->render_default(MESH_SPHERE,
-                             glm::scale(
-                                     glm::translate(
-                                             glm::identity<glm::mat4>(),
-                                             position),
-                                     glm::vec3(1.f / SCALE)));
+    renderer->render_default(
+            PRIMITIVE_SPHERE,
+            color,
+            glm::scale(
+                    glm::translate(
+                            glm::identity<glm::mat4>(),
+                            position),
+                    glm::vec3(1.f / SCALE)));
 }
 
 bool Light::hit(float *t, glm::vec3 origin, glm::vec3 direction)

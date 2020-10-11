@@ -5,9 +5,9 @@
 
 #include "light.hpp"
 #include "../system/camera.hpp"
-#include "../system/shader_manager.hpp"
-#include "../system/texture_manager.hpp"
-#include "../system/mesh_manager.hpp"
+#include "../system/manager/shader_manager.hpp"
+#include "../system/manager/texture_manager.hpp"
+#include "../system/manager/primitive_manager.hpp"
 #include "../system/opengl/lines.hpp"
 
 class SceneObject;

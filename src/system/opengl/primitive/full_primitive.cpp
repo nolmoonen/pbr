@@ -1,99 +1,76 @@
-#include "mesh.hpp"
+#include "full_primitive.hpp"
 
 #include <cmath>
+#include <glm/glm.hpp>
 
-#include <glm/geometric.hpp>
-
-void Mesh::create_mesh(
-        Mesh *t_mesh,
-        glm::vec3 *t_geom_vertices, glm::vec2 *t_text_vertices, glm::vec3 *t_norm_vertices,
-        glm::vec3 *t_tangent_vertices, glm::vec3 *t_bitangent_vertices,
-        uint32_t t_vertex_count,
-        GLushort *t_indices, uint32_t t_index_count
-)
+void FullPrimitive::create(
+        glm::vec3 *geom_vertices, glm::vec2 *text_vertices, glm::vec3 *norm_vertices,
+        glm::vec3 *tangent_vertices, glm::vec3 *bitangent_vertices,
+        uint32_t vertex_count,
+        GLushort *indices, uint32_t p_index_count)
 {
-    // create VAO
-    glGenVertexArrays(1, &t_mesh->m_vertex_array);
-    glBindVertexArray(t_mesh->m_vertex_array);
+    Primitive::create_primitive(geom_vertices, vertex_count, indices, p_index_count);
 
-    // create geometric vertex VBO
-    glGenBuffers(1, &t_mesh->m_buffer_vertex_geom);
-    glBindBuffer(GL_ARRAY_BUFFER, t_mesh->m_buffer_vertex_geom);
-    glBufferData(GL_ARRAY_BUFFER, t_vertex_count * sizeof(glm::vec3), t_geom_vertices, GL_STATIC_DRAW);
-    // index = 0, size = 3
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void *) 0);
+    glBindVertexArray(vertex_array);
 
     // create texture vertex VBO
-    glGenBuffers(1, &t_mesh->m_buffer_vertex_tex);
-    glBindBuffer(GL_ARRAY_BUFFER, t_mesh->m_buffer_vertex_tex);
-    glBufferData(GL_ARRAY_BUFFER, t_vertex_count * sizeof(glm::vec2), t_text_vertices, GL_STATIC_DRAW);
+    glGenBuffers(1, &buffer_vertex_tex);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_vertex_tex);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(glm::vec2), text_vertices, GL_STATIC_DRAW);
     // index = 1, size = 2
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void *) 0);
 
     // create vertex normal VBO
-    glGenBuffers(1, &t_mesh->m_buffer_vertex_normal);
-    glBindBuffer(GL_ARRAY_BUFFER, t_mesh->m_buffer_vertex_normal);
-    glBufferData(GL_ARRAY_BUFFER, t_vertex_count * sizeof(glm::vec3), t_norm_vertices, GL_STATIC_DRAW);
+    glGenBuffers(1, &buffer_vertex_normal);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_vertex_normal);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(glm::vec3), norm_vertices, GL_STATIC_DRAW);
     // index = 3, size = 3
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, (void *) 0);
 
     // create vertex tangent VBO
-    glGenBuffers(1, &t_mesh->m_buffer_vertex_tangent);
-    glBindBuffer(GL_ARRAY_BUFFER, t_mesh->m_buffer_vertex_tangent);
-    glBufferData(GL_ARRAY_BUFFER, t_vertex_count * sizeof(glm::vec3), t_tangent_vertices, GL_STATIC_DRAW);
+    glGenBuffers(1, &buffer_vertex_tangent);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_vertex_tangent);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(glm::vec3), tangent_vertices, GL_STATIC_DRAW);
     // index = 3, size = 3
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, (void *) 0);
 
     // create vertex bitangent VBO
-    glGenBuffers(1, &t_mesh->m_buffer_vertex_bitangent);
-    glBindBuffer(GL_ARRAY_BUFFER, t_mesh->m_buffer_vertex_bitangent);
-    glBufferData(GL_ARRAY_BUFFER, t_vertex_count * sizeof(glm::vec3), t_bitangent_vertices, GL_STATIC_DRAW);
+    glGenBuffers(1, &buffer_vertex_bitangent);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer_vertex_bitangent);
+    glBufferData(GL_ARRAY_BUFFER, vertex_count * sizeof(glm::vec3), bitangent_vertices, GL_STATIC_DRAW);
     // index = 3, size = 3
     glEnableVertexAttribArray(4);
     glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 0, (void *) 0);
 
-    // create index VBO
-    glGenBuffers(1, &t_mesh->m_buffer_index);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, t_mesh->m_buffer_index);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, t_index_count * sizeof(GLushort), t_indices, GL_STATIC_DRAW);
-
-    glBindVertexArray(0);
-
-    t_mesh->m_index_count = t_index_count;
-}
-
-void Mesh::delete_mesh(Mesh *t_mesh)
-{
-    glDeleteBuffers(1, &t_mesh->m_buffer_index);
-    t_mesh->m_buffer_index = 0;
-    glDeleteBuffers(1, &t_mesh->m_buffer_vertex_bitangent);
-    t_mesh->m_buffer_vertex_bitangent = 0;
-    glDeleteBuffers(1, &t_mesh->m_buffer_vertex_tangent);
-    t_mesh->m_buffer_vertex_tangent = 0;
-    glDeleteBuffers(1, &t_mesh->m_buffer_vertex_normal);
-    t_mesh->m_buffer_vertex_normal = 0;
-    glDeleteBuffers(1, &t_mesh->m_buffer_vertex_tex);
-    t_mesh->m_buffer_vertex_tex = 0;
-    glDeleteBuffers(1, &t_mesh->m_buffer_vertex_geom);
-    t_mesh->m_buffer_vertex_geom = 0;
-
-    glDeleteVertexArrays(1, &t_mesh->m_vertex_array);
-}
-
-void Mesh::render_mesh(Mesh *t_mesh)
-{
-    glBindVertexArray(t_mesh->m_vertex_array);
-
-    glDrawElements(GL_TRIANGLES, t_mesh->m_index_count, GL_UNSIGNED_SHORT, (void *) 0);
-
     glBindVertexArray(0);
 }
 
-void Mesh::create_cube(Mesh *mesh)
+void FullPrimitive::delete_primitive()
+{
+    glDeleteBuffers(1, &buffer_index);
+    buffer_index = 0;
+    glDeleteBuffers(1, &buffer_vertex_bitangent);
+    buffer_vertex_bitangent = 0;
+    glDeleteBuffers(1, &buffer_vertex_tangent);
+    buffer_vertex_tangent = 0;
+    glDeleteBuffers(1, &buffer_vertex_normal);
+    buffer_vertex_normal = 0;
+    glDeleteBuffers(1, &buffer_vertex_tex);
+    buffer_vertex_tex = 0;
+
+    Primitive::delete_primitive();
+}
+
+void FullPrimitive::render_primitive()
+{
+    // nothing to add, but included for completeness
+    Primitive::render_primitive();
+}
+
+Primitive *FullPrimitive::create_cube()
 {
     const float SIZE = 1.f;
 
@@ -285,13 +262,15 @@ void Mesh::create_cube(Mesh *mesh)
     indices[i * 6 + 5] = i * 4 + 1;
 
     // todo tangent and bitangent
-    create_mesh(mesh, geom_vertices, tex_vertices, norm_vertices,
-                norm_vertices, norm_vertices, vertex_count,
-                indices, index_count
-    );
+    auto *full_primitive = new FullPrimitive;
+    full_primitive->create(
+            geom_vertices, tex_vertices, norm_vertices,
+            norm_vertices, norm_vertices, vertex_count,
+            indices, index_count);
+    return (Primitive *) full_primitive;
 }
 
-void Mesh::create_skybox(Mesh *mesh)
+Primitive *FullPrimitive::create_skybox()
 {
     // NB: basically {create_cube} with different texture coordinates and differently ordered indices
     const float SIZE = 1.f;
@@ -449,13 +428,15 @@ void Mesh::create_skybox(Mesh *mesh)
     indices[i * 6 + 5] = i * 4 + 0;
 
     // todo tangent and bitangent
-    create_mesh(mesh,
-                geom_vertices, tex_vertices, norm_vertices,
-                norm_vertices, norm_vertices, vertex_count,
-                indices, index_count);
+    auto *full_primitive = new FullPrimitive;
+    full_primitive->create(
+            geom_vertices, tex_vertices, norm_vertices,
+            norm_vertices, norm_vertices, vertex_count,
+            indices, index_count);
+    return (Primitive *) full_primitive;
 }
 
-void Mesh::create_sphere(Mesh *mesh)
+Primitive *FullPrimitive::create_sphere()
 {
     const uint32_t STACK_COUNT = 64;
     const uint32_t SECTOR_COUNT = 64;
@@ -541,7 +522,11 @@ void Mesh::create_sphere(Mesh *mesh)
         }
     }
 
-    create_mesh(mesh, geom_vertices, tex_vertices, norm_vertices,
-                tangent_vertices, bitangent_vertices, VERTEX_COUNT,
-                indices, INDEX_COUNT);
+
+    auto *full_primitive = new FullPrimitive;
+    full_primitive->create(
+            geom_vertices, tex_vertices, norm_vertices,
+            tangent_vertices, bitangent_vertices, VERTEX_COUNT,
+            indices, INDEX_COUNT);
+    return (Primitive *) full_primitive;
 }

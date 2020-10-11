@@ -8,25 +8,35 @@
 #include <vector>
 #include <map>
 
-#include "../util/nm_log.hpp"
+#include "../../util/nm_log.hpp"
 
 // todo build in a warning for high memory usage?
 template<typename T>
 class Manager {
 private:
     struct Item {
-        /** Actual item held in the struct. */
-        T item;
+        /**
+         * Actual item held in the struct.
+         * A pointer is held to allow for subclassing of items. */
+        T *item;
         /** Whether it was used last frame. */
         bool used;
 
-        Item(T item, bool used) : item(item), used(used)
-        {}
+        Item(T *item, bool used) : item(item), used(used)
+        {};
     };
 
-    virtual int32_t create_item(T *item, uint32_t id) = 0;
+    /**
+     * Creates an instance of T on the heap which is a handle.
+     * The pointer to this instance is returned inside {item}.
+     * It creates the data associated with data descriptor {id}.
+     * And fills in the handle accordingly. */
+    virtual int32_t create_item(T **item, uint32_t id) = 0;
 
-    virtual void delete_item(T *item, uint32_t id) = 0;
+    /**
+     * Deletes the data for handle {item}. {id} is passed along for logging purposes.
+     * Also deletes the handle on the heap itself. */
+    virtual void delete_item(T **item, uint32_t id) = 0;
 
 protected:
 
@@ -47,18 +57,18 @@ public:
         auto item = map.find(id);
         if (item != map.end()) {
             item->second.used = true;
-            return &(item->second.item);
+            return item->second.item;
         }
 
         // create new
-        T t;
+        T *t;
         if (create_item(&t, id) != EXIT_SUCCESS) {
             nm_log::log(LOG_ERROR, "manager could not create item!\n");
         }
 
         map.insert(std::make_pair(id, Item(t, true)));
 
-        return &map.find(id)->second.item;
+        return map.find(id)->second.item;
     }
 
     /** Deletes and removes from the map all items that were not used in the last frame. */

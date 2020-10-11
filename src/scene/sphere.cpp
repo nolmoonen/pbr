@@ -25,7 +25,7 @@ void Sphere::render(bool debug_mode)
         colors.emplace_back(light->color);
     }
 
-    renderer->render_pbr(MESH_SPHERE, MATERIAL_BRICK_4K, positions, colors, glm::identity<glm::mat4>());
+    renderer->render_pbr(PRIMITIVE_SPHERE, Material::MATERIAL_BRICK_2K, positions, colors, glm::identity<glm::mat4>());
 }
 
 bool Sphere::hit(float *t, glm::vec3 origin, glm::vec3 direction)

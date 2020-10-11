@@ -3,7 +3,7 @@
 
 Renderer::Renderer(
         Camera *p_camera, ShaderManager *p_shader_manager, TextureManager *p_texture_manager,
-        MeshManager *p_mesh_manager
+        PrimitiveManager *p_mesh_manager
 ) :
         camera(p_camera), shader_manager(p_shader_manager), texture_manager(p_texture_manager),
         mesh_manager(p_mesh_manager)
@@ -79,12 +79,12 @@ void Renderer::render_pbr(
     Texture::bind_tex(texture_manager->get(material.ambient_occlusion));
     Texture::bind_tex(texture_manager->get(material.roughness));
     Texture::bind_tex(texture_manager->get(material.displacement));
-    Mesh::render_mesh(mesh_manager->get(mesh_id));
+    mesh_manager->get(mesh_id)->render_primitive();
     Texture::unbind_tex();
     ShaderProgram::unuse_shader_program();
 }
 
-void Renderer::render_default(uint32_t mesh_id, glm::mat4 model_matrix)
+void Renderer::render_default(uint32_t mesh_id, glm::vec3 color, glm::mat4 model_matrix)
 {
     ShaderProgram *program = shader_manager->get(SHADER_DEFAULT);
     ShaderProgram::use_shader_program(program);
@@ -94,7 +94,9 @@ void Renderer::render_default(uint32_t mesh_id, glm::mat4 model_matrix)
 
     ShaderProgram::set_vec3(program, "pos_camera", camera->get_camera_position());
 
-    Mesh::render_mesh(mesh_manager->get(mesh_id));
+    ShaderProgram::set_vec3(program, "color", color);
+
+    mesh_manager->get(mesh_id)->render_primitive();
 
     ShaderProgram::unuse_shader_program();
 }

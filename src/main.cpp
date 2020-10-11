@@ -5,7 +5,7 @@
 #include "system/window.hpp"
 #include "system/camera.hpp"
 #include "system/renderer.hpp"
-#include "system/texture_manager.hpp"
+#include "system/manager/texture_manager.hpp"
 
 void update(Camera *camera, Renderer *renderer, Scene *scene);
 
@@ -18,7 +18,7 @@ int main()
 
     ShaderManager shader_manager;
     TextureManager texture_manager;
-    MeshManager mesh_manager;
+    PrimitiveManager mesh_manager;
 
     Camera camera(
             (float) window::get_instance().get_input_handler()->get_size_x() /

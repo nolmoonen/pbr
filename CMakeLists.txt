@@ -10,22 +10,24 @@ set(SCENE_SOURCES
         src/scene/light.cpp)
 
 set(SOURCES
-        src/main.cpp
-        src/system/opengl/mesh.cpp
+        src/system/manager/manager.cpp
+        src/system/manager/primitive_manager.cpp
+        src/system/manager/shader_manager.cpp
+        src/system/manager/texture_manager.cpp
+        src/system/opengl/primitive/full_primitive.cpp
+        src/system/opengl/primitive/primitive.cpp
         src/system/opengl/lines.cpp
-        src/system/opengl/texture.cpp
         src/system/opengl/shader.cpp
-        src/system/window.cpp
-        src/system/input.cpp
-        src/system/renderer.cpp
-        src/system/shader_manager.cpp
+        src/system/opengl/texture.cpp
         src/system/camera.cpp
-        src/system/manager.cpp
-        src/system/texture_manager.cpp
-        src/system/mesh_manager.cpp
+        src/system/input.cpp
+        src/system/material.cpp
+        src/system/renderer.cpp
+        src/system/window.cpp
         src/util/nm_log.cpp
+        src/util/nm_math.cpp
         src/util/util.cpp
-        src/util/nm_math.cpp src/system/material.cpp src/system/material.hpp)
+        src/main.cpp)
 
 # resource files
 add_subdirectory(embedder)

@@ -19,6 +19,9 @@ private:
 public:
     std::vector<SceneObject *> objects;
     std::vector<Light *> lights;
+    /** Whether a scene object is selected. Redundant information since scene objects also maintain this,
+     * but the alternative is a pointer to the selected object, which may go invalid.*/
+    bool has_selection = false;
 
     explicit Scene(Renderer *renderer);
 

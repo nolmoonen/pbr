@@ -42,6 +42,12 @@ public:
 
     void render_lines(uint32_t primitive_id, glm::mat4 model_matrix);
 
+    const float WIDGET_CONE_BASE_RADIUS = .1f;
+    // since the cone is uniformly scaled and the cone is 2x2x2
+    const float WIDGET_CONE_HEIGHT = WIDGET_CONE_BASE_RADIUS * 2.f;
+    const float CYLINDER_LENGTH = .5f;
+    const float CYLINDER_RADIUS = .05f;
+
     void render_widget(glm::mat4 model_matrix);
 };
 

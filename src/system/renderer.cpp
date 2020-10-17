@@ -98,9 +98,8 @@ void Renderer::render_lines(uint32_t primitive_id, glm::mat4 model_matrix)
 
 void Renderer::render_widget(glm::mat4 model_matrix)
 {
-    const float CONE_SCALE = 20.f;           // how large the cone is
-    const float CYLINDER_LENGTH = 1.f;       // how long the cylinder should be (cone placement is adjusted accordingly)
-    const float CYLINDER_WIDTH_SCALE = 45.f; // the girth of the cylinder
+    const float CONE_SCALE = 2 / WIDGET_CONE_BASE_RADIUS;
+    const float CYLINDER_WIDTH_SCALE = 2 / CYLINDER_RADIUS;
 
     // x-axis
     render_default(PRIMITIVE_CONE, glm::vec3(1.f, 0.f, 0.f),

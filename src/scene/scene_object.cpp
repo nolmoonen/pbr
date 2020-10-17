@@ -9,8 +9,4 @@ SceneObject::SceneObject(
 {}
 
 void SceneObject::render(bool debug_mode)
-{
-    if (selected) {
-        renderer->render_widget(glm::translate(glm::identity<glm::mat4>(), position));
-    }
-}
+{}

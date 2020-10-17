@@ -6,6 +6,7 @@
 #include "system/camera.hpp"
 #include "system/renderer.hpp"
 #include "system/manager/texture_manager.hpp"
+#include "util/nm_math.hpp"
 
 void update(Camera *camera, Renderer *renderer, Scene *scene);
 
@@ -112,6 +113,49 @@ void update(Camera *camera, Renderer *renderer, Scene *scene)
         glm::vec3 b = glm::vec3(far.x / far.w, far.y / far.w, far.z / far.w);
         glm::vec3 dir = glm::normalize(b - a);
 
-        scene->cast_ray(a, dir);
+        // if the scene has an object selected, first see if the widget is hit
+        bool hit_x = false;
+        bool hit_y = false;
+        bool hit_z = false;
+        if (scene->has_selection) {
+            glm::vec3 widget_pos;
+            for (auto &object : scene->objects) {
+                if (object->selected) {
+                    widget_pos = object->position;
+                    break;
+                }
+            }
+
+            float t;
+            const glm::vec3 X = glm::vec3(1.f, 0.f, 0.f);
+            hit_x = nm_math::ray_cylinder(
+                    &t, a, dir, widget_pos, widget_pos + renderer->CYLINDER_LENGTH * X, renderer->CYLINDER_RADIUS) ||
+                    nm_math::ray_cone(
+                            &t, a, dir, widget_pos + (renderer->CYLINDER_LENGTH + renderer->WIDGET_CONE_HEIGHT) * X, -X,
+                            renderer->WIDGET_CONE_HEIGHT, renderer->WIDGET_CONE_BASE_RADIUS);
+            const glm::vec3 Y = glm::vec3(0.f, 1.f, 0.f);
+            hit_y = nm_math::ray_cylinder(
+                    &t, a, dir, widget_pos, widget_pos + renderer->CYLINDER_LENGTH * Y, renderer->CYLINDER_RADIUS) ||
+                    nm_math::ray_cone(
+                            &t, a, dir, widget_pos + (renderer->CYLINDER_LENGTH + renderer->WIDGET_CONE_HEIGHT) * Y, -Y,
+                            renderer->WIDGET_CONE_HEIGHT, renderer->WIDGET_CONE_BASE_RADIUS);
+            const glm::vec3 Z = glm::vec3(0.f, 0.f, 1.f);
+            hit_z = nm_math::ray_cylinder(
+                    &t, a, dir, widget_pos, widget_pos + renderer->CYLINDER_LENGTH * Z, renderer->CYLINDER_RADIUS) ||
+                    nm_math::ray_cone(
+                            &t, a, dir, widget_pos + (renderer->CYLINDER_LENGTH + renderer->WIDGET_CONE_HEIGHT) * Z, -Z,
+                            renderer->WIDGET_CONE_HEIGHT, renderer->WIDGET_CONE_BASE_RADIUS);
+        }
+
+        if (hit_x || hit_y || hit_z) {
+            // todo perform moving
+            if (hit_x) printf("hit x\n");
+            if (hit_y) printf("hit y\n");
+            if (hit_z) printf("hit z\n");
+        } else {
+            // only continue with scene objects if the widget was not hit
+            printf("no hit\n");
+            scene->cast_ray(a, dir);
+        }
     }
 }

@@ -1,11 +1,25 @@
 #include "scene.hpp"
 
 #include "sphere.hpp"
+#include "../system/renderer.hpp"
 
 void Scene::render(bool debug_mode)
 {
+    // draw all objects
     for (auto &object : objects) {
         object->render(debug_mode);
+    }
+
+    if (has_selection) {
+        // remove stored depth buffer
+        glClear(GL_DEPTH_BUFFER_BIT);
+
+        // to always draw widget on top
+        for (auto &object : objects) {
+            if (object->selected) {
+                renderer->render_widget(glm::translate(glm::identity<glm::mat4>(), object->position));
+            }
+        }
     }
 }
 
@@ -41,6 +55,7 @@ Scene::~Scene()
 void Scene::cast_ray(glm::vec3 origin, glm::vec3 direction)
 {
     // disable selection for all
+    has_selection = false;
     for (auto &object : objects) {
         object->selected = false;
     }
@@ -58,5 +73,8 @@ void Scene::cast_ray(glm::vec3 origin, glm::vec3 direction)
     }
 
     // enable selection for closest, if one is found
-    if (closest) closest->selected = true;
+    if (closest) {
+        has_selection = true;
+        closest->selected = true;
+    }
 }

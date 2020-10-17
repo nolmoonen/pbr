@@ -27,9 +27,10 @@ public:
      * Helper functions.
      */
 
-    /** Creates 1x2x1 cone centered at (0,0,0). */
+    /** Creates 2x2x2 cone centered at (0,0,0). */
     static Primitive *create_cone();
 
+    /** Creates 2x2x2 cylinder centered at (0,0,0). */
     static Primitive *create_cylinder();
 };
 

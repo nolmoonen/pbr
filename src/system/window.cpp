@@ -17,6 +17,7 @@ int32_t window::initialize()
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_SAMPLES, 8); // multisample with a factor of eight
 
     if ((window_handle = glfwCreateWindow(INITIAL_WINDOW_SIZE_X, INITIAL_WINDOW_SIZE_Y, "", NULL, NULL)) == NULL) {
         nm_log::log(LOG_ERROR, "failed to create window or OpenGl context\n");
@@ -48,6 +49,7 @@ int32_t window::initialize()
     // gl options
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
+    glEnable(GL_MULTISAMPLE);
 
     glClearColor(.8f, .8f, .8f, 1.f);
     glViewport(0, 0, INITIAL_WINDOW_SIZE_X, INITIAL_WINDOW_SIZE_Y);

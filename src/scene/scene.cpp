@@ -17,7 +17,7 @@ void Scene::render(bool debug_mode)
         // to always draw widget on top
         for (auto &object : objects) {
             if (object->selected) {
-                renderer->render_widget(glm::translate(glm::identity<glm::mat4>(), object->position));
+                renderer->render_widget(object->position);
             }
         }
     }

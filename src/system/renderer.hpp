@@ -42,13 +42,25 @@ public:
 
     void render_lines(uint32_t primitive_id, glm::mat4 model_matrix);
 
-    const float WIDGET_CONE_BASE_RADIUS = .1f;
+private:
+    const float WIDGET_CONE_BASE_RADIUS = .03f;
     // since the cone is uniformly scaled and the cone is 2x2x2
-    const float WIDGET_CONE_HEIGHT = WIDGET_CONE_BASE_RADIUS * 2.f;
-    const float CYLINDER_LENGTH = .5f;
-    const float CYLINDER_RADIUS = .05f;
+    const float WIDGET_CONE_HEIGHT = WIDGET_CONE_BASE_RADIUS * 2.f; // do not change
+    const float CYLINDER_LENGTH = .3f;
+    const float CYLINDER_RADIUS = .02f;
+public:
+    void render_widget(glm::vec3 position);
 
-    void render_widget(glm::mat4 model_matrix);
+    /**
+     * Getters for intersection testing.
+     */
+    float get_widget_cone_base_radius(glm::vec3 position) const;
+
+    float get_widget_cone_height(glm::vec3 position) const;
+
+    float get_cylinder_length(glm::vec3 position) const;
+
+    float get_cylinder_radius(glm::vec3 position) const;
 };
 
 

@@ -1,4 +1,5 @@
 // fragment shader
+// rendering colored primitives without shading
 // use with: 'default.vert'
 #version 330 core
 

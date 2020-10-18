@@ -1,5 +1,7 @@
 #include "renderer.hpp"
+
 #include "material.hpp"
+#include "opengl/texture.hpp"
 
 Renderer::Renderer(
         Camera *p_camera, ShaderManager *p_shader_manager, TextureManager *p_texture_manager,
@@ -17,6 +19,8 @@ void Renderer::render(Scene *scene)
         render_lines(PRIMITIVE_COORDINATE_SYSTEM, glm::identity<glm::mat4>());
     }
 
+    render_skybox();
+
     scene->render(debug_mode);
 
     window::get_instance().swap_buffers();
@@ -29,7 +33,7 @@ void Renderer::toggle_draw_coordinate()
 
 void Renderer::render_pbr(
         uint32_t mesh_id, uint32_t material_id, std::vector<glm::vec3> positions,
-        std::vector<glm::vec3> colors, glm::mat4 model_matrix)
+        std::vector<glm::vec3> colors, glm::mat4 model_matrix, TextureType irradiance_cubemap)
 {
     ShaderProgram *program = shader_manager->get(SHADER_PBR);
     ShaderProgram::use_shader_program(program);
@@ -48,23 +52,31 @@ void Renderer::render_pbr(
     ShaderProgram::set_float(program, "metallic", material.metallic);
 
     ShaderProgram::set_int(program, "texture_diff",
-                           (signed) texture_manager->get(material.diffuse)->m_texture_unit - GL_TEXTURE0);
+                           (signed) texture_manager->get(material.diffuse)->texture_unit - GL_TEXTURE0);
     ShaderProgram::set_int(program, "texture_norm",
-                           (signed) texture_manager->get(material.normal)->m_texture_unit - GL_TEXTURE0);
+                           (signed) texture_manager->get(material.normal)->texture_unit - GL_TEXTURE0);
     ShaderProgram::set_int(program, "texture_ao",
-                           (signed) texture_manager->get(material.ambient_occlusion)->m_texture_unit - GL_TEXTURE0);
+                           (signed) texture_manager->get(material.ambient_occlusion)->texture_unit - GL_TEXTURE0);
     ShaderProgram::set_int(program, "texture_rough",
-                           (signed) texture_manager->get(material.roughness)->m_texture_unit - GL_TEXTURE0);
+                           (signed) texture_manager->get(material.roughness)->texture_unit - GL_TEXTURE0);
     ShaderProgram::set_int(program, "texture_disp",
-                           (signed) texture_manager->get(material.displacement)->m_texture_unit - GL_TEXTURE0);
+                           (signed) texture_manager->get(material.displacement)->texture_unit - GL_TEXTURE0);
+    ShaderProgram::set_int(program, "irradiance_map",
+                           (signed) texture_manager->get(irradiance_cubemap)->texture_unit - GL_TEXTURE0);
 
     Texture::bind_tex(texture_manager->get(material.diffuse));
     Texture::bind_tex(texture_manager->get(material.normal));
     Texture::bind_tex(texture_manager->get(material.ambient_occlusion));
     Texture::bind_tex(texture_manager->get(material.roughness));
     Texture::bind_tex(texture_manager->get(material.displacement));
+    Texture::bind_tex(texture_manager->get(irradiance_cubemap));
     primitive_manager->get(mesh_id)->render_primitive();
-    Texture::unbind_tex();
+    Texture::unbind_tex(texture_manager->get(irradiance_cubemap));
+    Texture::unbind_tex(texture_manager->get(material.displacement));
+    Texture::unbind_tex(texture_manager->get(material.roughness));
+    Texture::unbind_tex(texture_manager->get(material.ambient_occlusion));
+    Texture::unbind_tex(texture_manager->get(material.normal));
+    Texture::unbind_tex(texture_manager->get(material.diffuse));
     ShaderProgram::unuse_shader_program();
 }
 
@@ -154,4 +166,21 @@ float Renderer::get_cylinder_radius(glm::vec3 position) const
 {
     float scale = glm::length(camera->get_camera_position() - position);
     return CYLINDER_RADIUS * scale;
+}
+
+void Renderer::render_skybox()
+{
+    ShaderProgram *program = shader_manager->get(SHADER_SKYBOX);
+    ShaderProgram::use_shader_program(program);
+    ShaderProgram::set_mat4(program, "model_matrix", glm::scale(glm::identity<glm::mat4>(), glm::vec3(.5f)));
+    ShaderProgram::set_mat4(program, "view_matrix", camera->get_view_matrix());
+    ShaderProgram::set_mat4(program, "projection_matrix", camera->get_proj_matrix());
+
+    ShaderProgram::set_int(
+            program, "environment_map",
+            (signed) texture_manager->get(CUBEMAP_CAYLEY_INTERIOR)->texture_unit - GL_TEXTURE0);
+    Texture::bind_tex(texture_manager->get(CUBEMAP_CAYLEY_INTERIOR));
+    primitive_manager->get(PRIMITIVE_SKYBOX)->render_primitive();
+    Texture::unbind_tex(texture_manager->get(CUBEMAP_CAYLEY_INTERIOR));
+    ShaderProgram::unuse_shader_program();
 }

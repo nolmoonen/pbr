@@ -51,6 +51,8 @@ int32_t window::initialize()
     glEnable(GL_CULL_FACE);
     glEnable(GL_MULTISAMPLE);
 
+    glDepthFunc(GL_LEQUAL); // needed for cubemapped skybox
+
     glClearColor(.8f, .8f, .8f, 1.f);
     glViewport(0, 0, INITIAL_WINDOW_SIZE_X, INITIAL_WINDOW_SIZE_Y);
 

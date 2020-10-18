@@ -6,10 +6,14 @@ template<>
 inline Manager<ShaderProgram>::~Manager<ShaderProgram>() = default;
 
 const std::map<uint32_t, ShaderManager::ShaderResource> ShaderManager::SHADER_PROGRAM_RESOURCES = {
-        {SHADER_DEFAULT, {default_vert, &default_vert_len, default_frag, &default_frag_len}},
-        {SHADER_PHONG,   {phong_vert,   &phong_vert_len,   phong_frag,   &phong_frag_len}},
-        {SHADER_LINES,   {lines_vert,   &lines_vert_len,   lines_frag,   &lines_frag_len}},
-        {SHADER_PBR,     {pbr_vert,     &pbr_vert_len,     pbr_frag,     &pbr_frag_len}}};
+        {SHADER_DEFAULT,             {default_vert,             &default_vert_len,             default_frag,             &default_frag_len}},
+        {SHADER_PHONG,               {phong_vert,               &phong_vert_len,               phong_frag,               &phong_frag_len}},
+        {SHADER_LINES,               {lines_vert,               &lines_vert_len,               lines_frag,               &lines_frag_len}},
+        {SHADER_PBR,                 {pbr_vert,                 &pbr_vert_len,                 pbr_frag,                 &pbr_frag_len}},
+        {SHADER_EQUIRECTANGULAR_MAP, {equirectangular_map_vert, &equirectangular_map_vert_len, equirectangular_map_frag, &equirectangular_map_frag_len}},
+        {SHADER_SKYBOX,              {skybox_vert,              &skybox_vert_len,              skybox_frag,              &skybox_frag_len}},
+        {SHADER_IRRADIANCE_MAP,      {irradiance_map_vert,      &irradiance_map_vert_len,      irradiance_map_frag,      &irradiance_map_frag_len}},
+};
 
 int32_t ShaderManager::create_item(ShaderProgram **item, uint32_t id)
 {

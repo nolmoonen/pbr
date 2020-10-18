@@ -1,4 +1,6 @@
 // vertex shader
+// implementing physically based rendering pipeline (https://learnopengl.com/PBR/Theory)
+// requires full primitives
 // use with: 'pbr.frag'
 #version 330 core
 

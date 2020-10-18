@@ -36,7 +36,7 @@ public:
 
     void render_pbr(
             uint32_t mesh_id, uint32_t material_id, std::vector<glm::vec3> positions,
-            std::vector<glm::vec3> colors, glm::mat4 model_matrix);
+            std::vector<glm::vec3> colors, glm::mat4 model_matrix, TextureType irradiance_cubemap);
 
     void render_default(uint32_t mesh_id, glm::vec3 color, glm::mat4 model_matrix);
 
@@ -61,6 +61,8 @@ public:
     float get_cylinder_length(glm::vec3 position) const;
 
     float get_cylinder_radius(glm::vec3 position) const;
+
+    void render_skybox();
 };
 
 

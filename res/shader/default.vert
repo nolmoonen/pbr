@@ -1,4 +1,5 @@
 // vertex shader
+// rendering colored primitives without shading
 // use with: 'default.frag'
 #version 330 core
 

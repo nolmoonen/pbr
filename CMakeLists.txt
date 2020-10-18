@@ -39,6 +39,12 @@ embed(lines_vert res/shader/lines.vert)
 embed(lines_frag res/shader/lines.frag)
 embed(pbr_vert res/shader/pbr.vert)
 embed(pbr_frag res/shader/pbr.frag)
+embed(equirectangular_map_vert res/shader/cubemap/equirectangular_map.vert)
+embed(equirectangular_map_frag res/shader/cubemap/equirectangular_map.frag)
+embed(skybox_vert res/shader/skybox.vert)
+embed(skybox_frag res/shader/skybox.frag)
+embed(irradiance_map_vert res/shader/cubemap/irradiance_map.vert)
+embed(irradiance_map_frag res/shader/cubemap/irradiance_map.frag)
 
 embed(test_png res/tex/test.png)
 embed(brick_diff_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_diff_1k.png)
@@ -46,6 +52,7 @@ embed(brick_norm_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick
 embed(brick_ao_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_ao_1k.png)
 embed(brick_rough_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_rough_1k.png)
 embed(brick_disp_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_disp_1k.png)
+embed(cayley_interior_hdr res/tex/cayley_interior/cayley_interior_1k.hdr)
 
 # build glfw, glad, and glm before adding compile options
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)

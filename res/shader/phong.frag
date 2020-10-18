@@ -1,4 +1,5 @@
 // fragment shader
+// simple phong shading
 // use with: 'phong.vert'
 #version 330 core
 

@@ -1,4 +1,5 @@
 // fragment shader
+// rendering colored lines primitives without lightning
 // use with: 'lines.vert'
 #version 330 core
 

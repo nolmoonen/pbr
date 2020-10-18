@@ -23,7 +23,7 @@ void Sphere::render(bool debug_mode)
 
     renderer->render_pbr(
             PRIMITIVE_SPHERE, Material::MATERIAL_BRICK_1K, positions, colors,
-            glm::translate(glm::identity<glm::mat4>(), position));
+            glm::translate(glm::identity<glm::mat4>(), position), CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE);
 }
 
 bool Sphere::hit(float *t, glm::vec3 origin, glm::vec3 direction)

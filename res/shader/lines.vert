@@ -1,4 +1,5 @@
 // vertex shader
+// rendering colored lines primitives without lightning
 // use with: 'lines.frag'
 #version 330 core
 

@@ -1,4 +1,6 @@
 // fragment shader
+// implementing physically based rendering pipeline (https://learnopengl.com/PBR/Theory)
+// requires full primitives
 // use with: 'pbr.vert'
 #version 330 core
 
@@ -10,6 +12,8 @@ uniform sampler2D texture_norm;
 uniform sampler2D texture_ao;
 uniform sampler2D texture_rough;
 uniform sampler2D texture_disp;
+
+uniform samplerCube irradiance_map;
 
 uniform vec3 color_light[NUM_LIGHTS];
 
@@ -26,6 +30,10 @@ out vec4 frag_color;
     Returns the light {f_0} reflected from a surface hit with angle {cos_theta}.
     Uses the Fresnel-Slick approximation. */
 vec3 fresnel_schlick(float cos_theta, vec3 f_0);
+
+/*  Fresnel equation with added roughness:
+    (https://seblagarde.wordpress.com/2011/08/17/hello-world/) */
+vec3 fresnel_schlick_roughness(float cos_theta, vec3 f_0, float roughness);
 
 /* Normal distribution function:
    Given surface normal {n} and halfway vector {h} and {roughness}, approximate the relative surface area aligned
@@ -48,7 +56,7 @@ vec2 parallax_mapping(vec2 tex_coords, vec3 view_dir);
 
 void main()
 {
-    vec3 v   = normalize(tangent_pos_view - tangent_frag_pos);// direction from point to camera
+    vec3 v          = normalize(tangent_pos_view - tangent_frag_pos); // direction from point to camera
     vec2 tex_coords = parallax_mapping(tex, v);
 
     // convert SRGB to linear RGB
@@ -61,27 +69,27 @@ void main()
     float ao = texture(texture_ao, tex_coords).r;
     float roughness = texture(texture_rough, tex_coords).r;
 
-    vec3 l_o = vec3(0.0);// total outgoing radiance of this fragment
-    vec3 f_0 = vec3(0.04);// surface reflection at zero incidence (0.04 for dielectric)
-    f_0      = mix(f_0, albedo, metallic);// lerp between f_0 and albedo based on metallic value
+    vec3 l_o = vec3(0.0);                  // total outgoing radiance of this fragment
+    vec3 f_0 = vec3(0.04);                 // surface reflection at zero incidence (0.04 for dielectric)
+    f_0      = mix(f_0, albedo, metallic); // lerp between f_0 and albedo based on metallic value
 
     for (int i = 0; i < NUM_LIGHTS; i++) {
-        vec3 l = normalize(tangent_pos_light[i] - tangent_frag_pos);// direction from point to light
-        vec3 h = normalize(v + l);// halfway vector
+        vec3 l = normalize(tangent_pos_light[i] - tangent_frag_pos); // direction from point to light
+        vec3 h = normalize(v + l);                                   // halfway vector
 
         // calculate light attenuation
-        float distance    = length(tangent_pos_light[i] - tangent_frag_pos);// distance towards light
-        float attenuation = 1.0 / (distance * distance);// light attenuation is inversely squarely correlated with dist
+        float distance    = length(tangent_pos_light[i] - tangent_frag_pos); // distance towards light
+        float attenuation = 1.0 / (distance * distance); // light attenuation is inversely squarely correlated with dist
         vec3 radiance     = color_light[i] * attenuation;
 
         // compute approximations
         float ndf = distribution_ggx(normal, h, roughness);
         float g   = geometry_smith(normal, v, l, roughness);
-        vec3 f    = fresnel_schlick(clamp(dot(h, v), 0.0, 1.0), f_0);
+        vec3 f    = fresnel_schlick_roughness(max(dot(h, v), 0.0), f_0, roughness);
 
-        vec3 k_s = f;// specular contribution determined by fresnel approximation
-        vec3 k_d = vec3(1.0) - k_s;// diffuse contribution by law of energy conservation
-        k_d *= 1.0 - metallic;// reduce diffuse contribution for metallic surfaces
+        vec3 k_s = f;               // specular contribution determined by fresnel approximation
+        vec3 k_d = vec3(1.0) - k_s; // diffuse contribution by law of energy conservation
+        k_d *= 1.0 - metallic;      // reduce diffuse contribution for metallic surfaces
 
         // plug in equation and add to outgoing radiance l_o
         vec3 numerator    = ndf * g * f;
@@ -92,7 +100,14 @@ void main()
         l_o += (k_d * albedo / M_PI + specular) * radiance * n_dot_l;
     }
 
-    vec3 ambient = vec3(0.03) * albedo * ao;// improvise ambient intensity
+    // ambient lighting (we now use IBL as the ambient term)
+    vec3 k_s = fresnel_schlick_roughness(max(dot(normal, v), 0.0), f_0, roughness);
+    vec3 k_d = 1.0 - k_s;
+    k_d *= 1.0 - metallic;
+    vec3 irradiance = texture(irradiance_map, normal).rgb;
+    vec3 diffuse    = irradiance * albedo;
+    vec3 ambient    = (k_d * diffuse) * ao;
+
     vec3 color = ambient + l_o;
 
     // reinhard tone mapping
@@ -105,6 +120,11 @@ void main()
 vec3 fresnel_schlick(float cos_theta, vec3 f_0)
 {
     return f_0 + (1.0 - f_0) * pow(1.0 - cos_theta, 5.0);
+}
+
+vec3 fresnel_schlick_roughness(float cos_theta, vec3 f_0, float roughness)
+{
+    return f_0 + (max(vec3(1.0 - roughness), f_0) - f_0) * pow(1.0 - cos_theta, 5.0);
 }
 
 float distribution_ggx(vec3 n, vec3 h, float roughness)

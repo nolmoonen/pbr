@@ -11,4 +11,5 @@
 *   Fix sphere mesh (release vs debug)
 
 #### Image credit
-*   Textures obtained from [TextureHaven](https://texturehaven.com/).
+*   Material textures obtained from [TextureHaven](https://texturehaven.com/).
+*   HDR textures obtained from [HDRIHaven](https://hdrihaven.com/).

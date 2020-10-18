@@ -11,7 +11,10 @@ enum ShaderType {
     SHADER_DEFAULT,
     SHADER_PHONG,
     SHADER_LINES,
-    SHADER_PBR
+    SHADER_PBR,
+    SHADER_EQUIRECTANGULAR_MAP,
+    SHADER_SKYBOX,
+    SHADER_IRRADIANCE_MAP,
 };
 
 class ShaderManager : public Manager<ShaderProgram> {

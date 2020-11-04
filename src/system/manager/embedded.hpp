@@ -73,4 +73,7 @@ extern const size_t brick_disp_png_len;
 extern const char cayley_interior_hdr[];
 extern const size_t cayley_interior_hdr_len;
 
+extern const char studio_hdr[];
+extern const size_t studio_hdr_len;
+
 #endif //SYSTEM_EMBEDDED_HPP

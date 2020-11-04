@@ -53,6 +53,7 @@ embed(brick_ao_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_0
 embed(brick_rough_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_rough_1k.png)
 embed(brick_disp_png res/tex/castle_brick_07/castle_brick_07_1k_png/castle_brick_07_disp_1k.png)
 embed(cayley_interior_hdr res/tex/cayley_interior/cayley_interior_1k.hdr)
+embed(studio_hdr res/tex/studio_small_03/studio_small_03_1k.hdr)
 
 # build glfw, glad, and glm before adding compile options
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)

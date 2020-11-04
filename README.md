@@ -5,9 +5,11 @@
 *   Clone [stb](https://github.com/nothings/stb) into directory `external/stb`.
 *   Build using CMake.
 
-#### Todo
+#### Controls
+todo
+
+#### Future improvements
 *   Texture streaming
-*   Displacement mapping
 *   Fix sphere mesh (release vs debug)
 
 #### Image credit

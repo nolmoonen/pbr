@@ -62,6 +62,14 @@ void update(Camera *camera, Renderer *renderer, Scene *scene)
         window::get_instance().set_to_close();
     }
 
+    if (window::get_instance().get_input_handler()->get_key_state(input::NUM_1, input::PRESSED)) {
+        renderer->switch_skybox(CUBEMAP_CAYLEY_INTERIOR, CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE);
+    }
+
+    if (window::get_instance().get_input_handler()->get_key_state(input::NUM_2, input::PRESSED)) {
+        renderer->switch_skybox(CUBEMAP_STUDIO, CUBEMAP_STUDIO_IRRADIANCE);
+    }
+
     // update camera zoom
     camera->add_zoom((float) window::get_instance().get_input_handler()->get_yoffset());
 

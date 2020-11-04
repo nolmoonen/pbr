@@ -33,7 +33,7 @@ void Renderer::toggle_draw_coordinate()
 
 void Renderer::render_pbr(
         uint32_t mesh_id, uint32_t material_id, std::vector<glm::vec3> positions,
-        std::vector<glm::vec3> colors, glm::mat4 model_matrix, TextureType irradiance_cubemap)
+        std::vector<glm::vec3> colors, glm::mat4 model_matrix)
 {
     ShaderProgram *program = shader_manager->get(SHADER_PBR);
     ShaderProgram::use_shader_program(program);
@@ -62,16 +62,16 @@ void Renderer::render_pbr(
     ShaderProgram::set_int(program, "texture_disp",
                            (signed) texture_manager->get(material.displacement)->texture_unit - GL_TEXTURE0);
     ShaderProgram::set_int(program, "irradiance_map",
-                           (signed) texture_manager->get(irradiance_cubemap)->texture_unit - GL_TEXTURE0);
+                           (signed) texture_manager->get(cubemap_irradiance)->texture_unit - GL_TEXTURE0);
 
     Texture::bind_tex(texture_manager->get(material.diffuse));
     Texture::bind_tex(texture_manager->get(material.normal));
     Texture::bind_tex(texture_manager->get(material.ambient_occlusion));
     Texture::bind_tex(texture_manager->get(material.roughness));
     Texture::bind_tex(texture_manager->get(material.displacement));
-    Texture::bind_tex(texture_manager->get(irradiance_cubemap));
+    Texture::bind_tex(texture_manager->get(cubemap_irradiance));
     primitive_manager->get(mesh_id)->render_primitive();
-    Texture::unbind_tex(texture_manager->get(irradiance_cubemap));
+    Texture::unbind_tex(texture_manager->get(cubemap_irradiance));
     Texture::unbind_tex(texture_manager->get(material.displacement));
     Texture::unbind_tex(texture_manager->get(material.roughness));
     Texture::unbind_tex(texture_manager->get(material.ambient_occlusion));
@@ -182,9 +182,15 @@ void Renderer::render_skybox()
 
     ShaderProgram::set_int(
             program, "environment_map",
-            (signed) texture_manager->get(CUBEMAP_CAYLEY_INTERIOR)->texture_unit - GL_TEXTURE0);
-    Texture::bind_tex(texture_manager->get(CUBEMAP_CAYLEY_INTERIOR));
+            (signed) texture_manager->get(cubemap)->texture_unit - GL_TEXTURE0);
+    Texture::bind_tex(texture_manager->get(cubemap));
     primitive_manager->get(PRIMITIVE_SKYBOX)->render_primitive();
-    Texture::unbind_tex(texture_manager->get(CUBEMAP_CAYLEY_INTERIOR));
+    Texture::unbind_tex(texture_manager->get(cubemap));
     ShaderProgram::unuse_shader_program();
+}
+
+void Renderer::switch_skybox(TextureType p_cubemap, TextureType p_cubemap_irradiance)
+{
+    cubemap = p_cubemap;
+    cubemap_irradiance = p_cubemap_irradiance;
 }

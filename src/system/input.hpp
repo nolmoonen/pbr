@@ -94,6 +94,8 @@ public:
         SPACE = GLFW_KEY_SPACE,
         BACKSPACE = GLFW_KEY_BACKSPACE,
         RIGHT = GLFW_KEY_RIGHT,
+        NUM_1 = GLFW_KEY_1,
+        NUM_2 = GLFW_KEY_2
     };
     enum mouse_button_value_t {
         LMB = GLFW_MOUSE_BUTTON_LEFT,

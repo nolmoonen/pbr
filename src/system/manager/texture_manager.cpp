@@ -63,6 +63,7 @@ int TextureManager::TextureResourceFromTextureResource::create_texture(Texture *
 const std::map<uint32_t, TextureManager::TextureResource *> TextureManager::TEXTURE_RESOURCES = {
         {TEXTURE_TEST,
                 new TextureResourceFromMemory(4, 8, 0, INTEGER, REPEAT, test_png, &test_png_len)},
+
         {TEXTURE_CAYLEY_INTERIOR_HDR,
                 new TextureResourceFromMemory(
                         3, 32, 0, FLOATING_POINT, CLAMP, cayley_interior_hdr, &cayley_interior_hdr_len)},
@@ -72,6 +73,16 @@ const std::map<uint32_t, TextureManager::TextureResource *> TextureManager::TEXT
         {CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE,
                 new TextureResourceFromTextureResource(
                         CUBEMAP_CAYLEY_INTERIOR, 5, &Texture::create_irradiance_cubemap_from_cubemap)},
+
+        {TEXTURE_STUDIO_HDR,
+                new TextureResourceFromMemory(
+                        3, 32, 0, FLOATING_POINT, CLAMP, studio_hdr, &studio_hdr_len)},
+        {CUBEMAP_STUDIO,
+                new TextureResourceFromTextureResource(
+                        TEXTURE_STUDIO_HDR, 0, &Texture::create_cubemap_from_tex)},
+        {CUBEMAP_STUDIO_IRRADIANCE,
+                new TextureResourceFromTextureResource(
+                        CUBEMAP_STUDIO, 5, &Texture::create_irradiance_cubemap_from_cubemap)},
 
         {TEXTURE_BRICK_1_DIFF,
                 new TextureResourceFromMemory(4, 16, 0, INTEGER, REPEAT, brick_diff_png, &brick_diff_png_len)},

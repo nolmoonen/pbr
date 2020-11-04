@@ -19,6 +19,9 @@ private:
     TextureManager *texture_manager;
     PrimitiveManager *primitive_manager;
 
+    TextureType cubemap = CUBEMAP_CAYLEY_INTERIOR;
+    TextureType cubemap_irradiance = CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE;
+
     /** Whether the coordinate system should be drawn. */
     bool debug_mode = false;
 public:
@@ -36,11 +39,13 @@ public:
 
     void render_pbr(
             uint32_t mesh_id, uint32_t material_id, std::vector<glm::vec3> positions,
-            std::vector<glm::vec3> colors, glm::mat4 model_matrix, TextureType irradiance_cubemap);
+            std::vector<glm::vec3> colors, glm::mat4 model_matrix);
 
     void render_default(uint32_t mesh_id, glm::vec3 color, glm::mat4 model_matrix);
 
     void render_lines(uint32_t primitive_id, glm::mat4 model_matrix);
+
+    void switch_skybox(TextureType p_cubemap, TextureType p_cubemap_irradiance);
 
 private:
     const float WIDGET_CONE_BASE_RADIUS = .03f;

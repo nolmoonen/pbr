@@ -54,13 +54,15 @@ public:
     /**
      * Getters for intersection testing.
      */
-    float get_widget_cone_base_radius(glm::vec3 position) const;
+    float get_scale(glm::vec3 position);
 
-    float get_widget_cone_height(glm::vec3 position) const;
+    float get_widget_cone_base_radius(glm::vec3 position);
 
-    float get_cylinder_length(glm::vec3 position) const;
+    float get_widget_cone_height(glm::vec3 position);
 
-    float get_cylinder_radius(glm::vec3 position) const;
+    float get_cylinder_length(glm::vec3 position);
+
+    float get_cylinder_radius(glm::vec3 position);
 
     void render_skybox();
 };

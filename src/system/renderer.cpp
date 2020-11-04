@@ -144,28 +144,32 @@ void Renderer::render_widget(glm::vec3 position)
             glm::vec3(0.f, 1.f, 0.f)));
 }
 
-float Renderer::get_widget_cone_base_radius(glm::vec3 position) const
+float Renderer::get_scale(glm::vec3 position)
 {
-    float scale = glm::length(camera->get_camera_position() - position);
-    return WIDGET_CONE_BASE_RADIUS * scale;
+    glm::vec3 f_p = camera->get_camera_position();
+    glm::vec3 f_n = glm::normalize(camera->target - f_p);
+    glm::vec3 p = position;
+    return glm::dot(p - f_p, f_n);
 }
 
-float Renderer::get_widget_cone_height(glm::vec3 position) const
+float Renderer::get_widget_cone_base_radius(glm::vec3 position)
 {
-    float scale = glm::length(camera->get_camera_position() - position);
-    return WIDGET_CONE_HEIGHT * scale;
+    return WIDGET_CONE_BASE_RADIUS * get_scale(position);
 }
 
-float Renderer::get_cylinder_length(glm::vec3 position) const
+float Renderer::get_widget_cone_height(glm::vec3 position)
 {
-    float scale = glm::length(camera->get_camera_position() - position);
-    return CYLINDER_LENGTH * scale;
+    return WIDGET_CONE_HEIGHT * get_scale(position);
 }
 
-float Renderer::get_cylinder_radius(glm::vec3 position) const
+float Renderer::get_cylinder_length(glm::vec3 position)
 {
-    float scale = glm::length(camera->get_camera_position() - position);
-    return CYLINDER_RADIUS * scale;
+    return CYLINDER_LENGTH * get_scale(position);
+}
+
+float Renderer::get_cylinder_radius(glm::vec3 position)
+{
+    return CYLINDER_RADIUS * get_scale(position);
 }
 
 void Renderer::render_skybox()

@@ -1,13 +1,12 @@
 #include "sphere.hpp"
 
 #include "../util/nm_math.hpp"
-#include "../system/material.hpp"
 #include "../system/renderer.hpp"
 
 Sphere::Sphere(
-        Scene *scene, Renderer *renderer, glm::vec3 position
+        Scene *scene, Renderer *renderer, glm::vec3 position, Material::MaterialType p_material
 ) :
-        SceneObject(scene, renderer, position)
+        SceneObject(scene, renderer, position), material(p_material)
 {}
 
 void Sphere::render(bool debug_mode)
@@ -22,7 +21,7 @@ void Sphere::render(bool debug_mode)
     }
 
     renderer->render_pbr(
-            PRIMITIVE_SPHERE, Material::MATERIAL_BRICK_1K, positions, colors,
+            PRIMITIVE_SPHERE, material, positions, colors,
             glm::translate(glm::identity<glm::mat4>(), position));
 }
 

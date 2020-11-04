@@ -46,37 +46,30 @@ void Renderer::render_pbr(
 
     ShaderProgram::set_vec3(program, "pos_camera", camera->get_camera_position());
 
-    Material material{};
+    Material *material;
     Material::get_material_by_id(material_id, &material);
 
-    ShaderProgram::set_float(program, "metallic", material.metallic);
+    material->set(program, texture_manager);
 
-    ShaderProgram::set_int(program, "texture_diff",
-                           (signed) texture_manager->get(material.diffuse)->texture_unit - GL_TEXTURE0);
-    ShaderProgram::set_int(program, "texture_norm",
-                           (signed) texture_manager->get(material.normal)->texture_unit - GL_TEXTURE0);
-    ShaderProgram::set_int(program, "texture_ao",
-                           (signed) texture_manager->get(material.ambient_occlusion)->texture_unit - GL_TEXTURE0);
-    ShaderProgram::set_int(program, "texture_rough",
-                           (signed) texture_manager->get(material.roughness)->texture_unit - GL_TEXTURE0);
-    ShaderProgram::set_int(program, "texture_disp",
-                           (signed) texture_manager->get(material.displacement)->texture_unit - GL_TEXTURE0);
     ShaderProgram::set_int(program, "irradiance_map",
                            (signed) texture_manager->get(cubemap_irradiance)->texture_unit - GL_TEXTURE0);
+    ShaderProgram::set_int(program, "pre_filter_map",
+                           (signed) texture_manager->get(cubemap_pre_filter)->texture_unit - GL_TEXTURE0);
+    ShaderProgram::set_int(program, "brdf_lut",
+                           (signed) texture_manager->get(BRDF_LUT)->texture_unit - GL_TEXTURE0);
 
-    Texture::bind_tex(texture_manager->get(material.diffuse));
-    Texture::bind_tex(texture_manager->get(material.normal));
-    Texture::bind_tex(texture_manager->get(material.ambient_occlusion));
-    Texture::bind_tex(texture_manager->get(material.roughness));
-    Texture::bind_tex(texture_manager->get(material.displacement));
+    material->bind(texture_manager);
+
     Texture::bind_tex(texture_manager->get(cubemap_irradiance));
+    Texture::bind_tex(texture_manager->get(cubemap_pre_filter));
+    Texture::bind_tex(texture_manager->get(BRDF_LUT));
     primitive_manager->get(mesh_id)->render_primitive();
+    Texture::unbind_tex(texture_manager->get(BRDF_LUT));
+    Texture::unbind_tex(texture_manager->get(cubemap_pre_filter));
     Texture::unbind_tex(texture_manager->get(cubemap_irradiance));
-    Texture::unbind_tex(texture_manager->get(material.displacement));
-    Texture::unbind_tex(texture_manager->get(material.roughness));
-    Texture::unbind_tex(texture_manager->get(material.ambient_occlusion));
-    Texture::unbind_tex(texture_manager->get(material.normal));
-    Texture::unbind_tex(texture_manager->get(material.diffuse));
+
+    material->unbind(texture_manager);
+
     ShaderProgram::unuse_shader_program();
 }
 
@@ -189,8 +182,10 @@ void Renderer::render_skybox()
     ShaderProgram::unuse_shader_program();
 }
 
-void Renderer::switch_skybox(TextureType p_cubemap, TextureType p_cubemap_irradiance)
+void Renderer::switch_skybox(
+        TextureType p_cubemap, TextureType p_cubemap_irradiance, TextureType p_cubemap_pre_filter)
 {
     cubemap = p_cubemap;
     cubemap_irradiance = p_cubemap_irradiance;
+    cubemap_pre_filter = p_cubemap_pre_filter;
 }

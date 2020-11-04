@@ -11,6 +11,7 @@ todo
 #### Future improvements
 *   Texture streaming
 *   Fix sphere mesh (release vs debug)
+*   Generate cubemap, irradiance cubemap, pre-filter cubemap, and BRDF LUT at compile time rather than run time.
 
 #### Image credit
 *   Material textures obtained from [TextureHaven](https://texturehaven.com/).

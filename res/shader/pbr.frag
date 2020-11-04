@@ -7,17 +7,20 @@
 #define NUM_LIGHTS 10
 #define M_PI 3.1415926535897932384626433832795
 
-uniform sampler2D texture_diff;
-uniform sampler2D texture_norm;
-uniform sampler2D texture_ao;
-uniform sampler2D texture_rough;
-uniform sampler2D texture_disp;
+uniform sampler2D texture_diff;     // 0
+uniform sampler2D texture_norm;     // 1
+uniform sampler2D texture_ao;       // 2
+uniform sampler2D texture_rough;    // 3
+uniform sampler2D texture_disp;     // 4
+uniform sampler2D texture_spec;     // 5
 
-uniform samplerCube irradiance_map;
+uniform int has_spec;
+
+uniform samplerCube irradiance_map; // 6
+uniform samplerCube pre_filter_map; // 7
+uniform sampler2D brdf_lut;         // 8
 
 uniform vec3 color_light[NUM_LIGHTS];
-
-uniform float metallic;
 
 in vec2 tex;
 in vec3 tangent_pos_light[NUM_LIGHTS];
@@ -66,8 +69,15 @@ void main()
     vec3 normal = texture(texture_norm, tex_coords).rgb;
     normal = normalize(normal * 2.0 - 1.0);
 
+    vec3 r = reflect(-v, normal);
+
     float ao = texture(texture_ao, tex_coords).r;
     float roughness = texture(texture_rough, tex_coords).r;
+
+    float metallic = 0.f;
+    if (bool(has_spec)) {
+        metallic = texture(texture_spec, tex_coords).r;
+    }
 
     vec3 l_o = vec3(0.0);                  // total outgoing radiance of this fragment
     vec3 f_0 = vec3(0.04);                 // surface reflection at zero incidence (0.04 for dielectric)
@@ -85,77 +95,84 @@ void main()
         // compute approximations
         float ndf = distribution_ggx(normal, h, roughness);
         float g   = geometry_smith(normal, v, l, roughness);
-        vec3 f    = fresnel_schlick_roughness(max(dot(h, v), 0.0), f_0, roughness);
+        vec3 f    = fresnel_schlick_roughness(max(dot(h, v), 0.), f_0, roughness);
 
-        vec3 k_s = f;               // specular contribution determined by fresnel approximation
-        vec3 k_d = vec3(1.0) - k_s; // diffuse contribution by law of energy conservation
-        k_d *= 1.0 - metallic;      // reduce diffuse contribution for metallic surfaces
+        vec3 k_s = f;              // specular contribution determined by fresnel approximation
+        vec3 k_d = vec3(1.) - k_s; // diffuse contribution by law of energy conservation
+        k_d *= 1. - metallic;      // reduce diffuse contribution for metallic surfaces
 
         // plug in equation and add to outgoing radiance l_o
         vec3 numerator    = ndf * g * f;
-        float denominator = 4.0 * max(dot(normal, v), 0.0) * max(dot(normal, l), 0.0);
-        vec3 specular     = numerator / max(denominator, 0.001);
+        float denominator = 4. * max(dot(normal, v), 0.) * max(dot(normal, l), 0.);
+        vec3 specular     = numerator / max(denominator, .001); // prevent div zero
 
-        float n_dot_l = max(dot(normal, l), 0.0);
+        float n_dot_l = max(dot(normal, l), 0.);
         l_o += (k_d * albedo / M_PI + specular) * radiance * n_dot_l;
     }
 
     // ambient lighting (we now use IBL as the ambient term)
-    vec3 k_s = fresnel_schlick_roughness(max(dot(normal, v), 0.0), f_0, roughness);
-    vec3 k_d = 1.0 - k_s;
-    k_d *= 1.0 - metallic;
+    vec3 k_s = fresnel_schlick_roughness(max(dot(normal, v), 0.), f_0, roughness);
+    vec3 k_d = 1. - k_s;
+    k_d *= 1. - metallic;
     vec3 irradiance = texture(irradiance_map, normal).rgb;
     vec3 diffuse    = irradiance * albedo;
-    vec3 ambient    = (k_d * diffuse) * ao;
+
+    // sample pre-filter map and BRDF lut and combine them together as per the Split-Sum approximation
+    const float MAX_REFLECTION_LOD = 4.;
+    vec3 prefiltered_color = textureLod(pre_filter_map, r, roughness * MAX_REFLECTION_LOD).rgb;
+    vec2 brdf              = texture(brdf_lut, vec2(max(dot(normal, v), 0.), roughness)).rg;
+    vec3 specular          = prefiltered_color * (k_s * brdf.x + brdf.y);
+
+    vec3 ambient = (k_d * diffuse + specular) * ao;
 
     vec3 color = ambient + l_o;
 
-    // reinhard tone mapping
-    color = color / (color + vec3(1.0));
-    color = pow(color, vec3(1.0 / 2.2));
+    // reinhard tone mapping + gamma correction
+    color = color / (color + vec3(1.));
+    color = pow(color, vec3(1. / 2.2));
 
     frag_color = vec4(color, 1.0);
 }
 
 vec3 fresnel_schlick(float cos_theta, vec3 f_0)
 {
-    return f_0 + (1.0 - f_0) * pow(1.0 - cos_theta, 5.0);
+    return f_0 + (1. - f_0) * pow(1. - cos_theta, 5.);
 }
 
 vec3 fresnel_schlick_roughness(float cos_theta, vec3 f_0, float roughness)
 {
-    return f_0 + (max(vec3(1.0 - roughness), f_0) - f_0) * pow(1.0 - cos_theta, 5.0);
+    return f_0 + (max(vec3(1. - roughness), f_0) - f_0) * pow(1. - cos_theta, 5.);
 }
 
 float distribution_ggx(vec3 n, vec3 h, float roughness)
 {
     float a         = roughness * roughness;
     float a2        = a * a;
-    float n_dot_h   = max(dot(n, h), 0.0);
+    float n_dot_h   = max(dot(n, h), 0.);
     float n_dot_h_2 = n_dot_h * n_dot_h;
 
-    float num   = a2;
-    float denom = (n_dot_h_2 * (a2 - 1.0) + 1.0);
-    denom = M_PI * denom * denom;
+    float numerator   = a2;
+    float denominator = (n_dot_h_2 * (a2 - 1.) + 1.);
+    denominator       = M_PI * denominator * denominator;
 
-    return num / denom;
+    return numerator / denominator;
 }
 
 float geometry_schlick_ggx(float n_dot_v, float roughness)
 {
-    float r = (roughness + 1.0);
-    float k = (r * r) / 8.0;
+    float r = (roughness + 1.);
+    float k = (r * r) / 8.;
 
     float num   = n_dot_v;
-    float denom = n_dot_v * (1.0 - k) + k;
+    float denom = n_dot_v * (1. - k) + k;
 
     return num / denom;
 }
 
 float geometry_smith(vec3 n, vec3 v, vec3 l, float roughness)
 {
-    float n_dot_v = max(dot(n, v), 0.0);
-    float n_dot_l = max(dot(n, l), 0.0);
+    float n_dot_v = max(dot(n, v), 0.);
+    float n_dot_l = max(dot(n, l), 0.);
     float ggx2  = geometry_schlick_ggx(n_dot_v, roughness);
     float ggx1  = geometry_schlick_ggx(n_dot_l, roughness);
 

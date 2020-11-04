@@ -3,10 +3,13 @@
 
 #include "scene_object.hpp"
 #include "scene.hpp"
+#include "../system/material.hpp"
 
 class Sphere : public SceneObject {
+private:
+    Material::MaterialType material;
 public:
-    Sphere(Scene *scene, Renderer *renderer, glm::vec3 position);
+    Sphere(Scene *scene, Renderer *renderer, glm::vec3 position, Material::MaterialType p_material);
 
     void render(bool debug_mode) override;
 

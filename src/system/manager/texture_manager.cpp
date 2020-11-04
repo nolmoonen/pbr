@@ -64,6 +64,10 @@ const std::map<uint32_t, TextureManager::TextureResource *> TextureManager::TEXT
         {TEXTURE_TEST,
                 new TextureResourceFromMemory(4, 8, 0, INTEGER, REPEAT, test_png, &test_png_len)},
 
+        {BRDF_LUT,
+                new TextureResourceFromTextureResource( // NB: TextureType parameter is NOT used!
+                        TEXTURE_TEST, 8, &Texture::create_tex_from_tex)},
+
         {TEXTURE_CAYLEY_INTERIOR_HDR,
                 new TextureResourceFromMemory(
                         3, 32, 0, FLOATING_POINT, CLAMP, cayley_interior_hdr, &cayley_interior_hdr_len)},
@@ -72,7 +76,10 @@ const std::map<uint32_t, TextureManager::TextureResource *> TextureManager::TEXT
                         TEXTURE_CAYLEY_INTERIOR_HDR, 0, &Texture::create_cubemap_from_tex)},
         {CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE,
                 new TextureResourceFromTextureResource(
-                        CUBEMAP_CAYLEY_INTERIOR, 5, &Texture::create_irradiance_cubemap_from_cubemap)},
+                        CUBEMAP_CAYLEY_INTERIOR, 6, &Texture::create_irradiance_cubemap_from_cubemap)},
+        {CUBEMAP_CAYLEY_INTERIOR_PRE_FILTER,
+                new TextureResourceFromTextureResource(
+                        CUBEMAP_CAYLEY_INTERIOR, 7, &Texture::create_pre_filtered_cubemap_from_cubemap)},
 
         {TEXTURE_STUDIO_HDR,
                 new TextureResourceFromMemory(
@@ -82,7 +89,10 @@ const std::map<uint32_t, TextureManager::TextureResource *> TextureManager::TEXT
                         TEXTURE_STUDIO_HDR, 0, &Texture::create_cubemap_from_tex)},
         {CUBEMAP_STUDIO_IRRADIANCE,
                 new TextureResourceFromTextureResource(
-                        CUBEMAP_STUDIO, 5, &Texture::create_irradiance_cubemap_from_cubemap)},
+                        CUBEMAP_STUDIO, 6, &Texture::create_irradiance_cubemap_from_cubemap)},
+        {CUBEMAP_STUDIO_PRE_FILTER,
+                new TextureResourceFromTextureResource(
+                        CUBEMAP_STUDIO, 7, &Texture::create_pre_filtered_cubemap_from_cubemap)},
 
         {TEXTURE_BRICK_1_DIFF,
                 new TextureResourceFromMemory(4, 16, 0, INTEGER, REPEAT, brick_diff_png, &brick_diff_png_len)},
@@ -145,6 +155,43 @@ const std::map<uint32_t, TextureManager::TextureResource *> TextureManager::TEXT
         {TEXTURE_BRICK_8_DISP,
                 new TextureResourceFromFile(2, 16, 4, INTEGER, REPEAT,
                                             "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_disp_8k.png")},
+
+        {TEXTURE_METAL_1_DIFF,
+                new TextureResourceFromMemory(4, 16, 0, INTEGER, REPEAT, metal_diff_png, &metal_diff_png_len)},
+        {TEXTURE_METAL_1_NORM,
+                new TextureResourceFromMemory(4, 16, 1, INTEGER, REPEAT, metal_norm_png, &metal_norm_png_len)},
+        {TEXTURE_METAL_1_AO,
+                new TextureResourceFromMemory(2, 16, 2, INTEGER, REPEAT, metal_ao_png, &metal_ao_png_len)},
+        {TEXTURE_METAL_1_ROUGH,
+                new TextureResourceFromMemory(2, 16, 3, INTEGER, REPEAT, metal_rough_png, &metal_rough_png_len)},
+        {TEXTURE_METAL_1_DISP,
+                new TextureResourceFromMemory(2, 16, 4, INTEGER, REPEAT, metal_disp_png, &metal_disp_png_len)},
+        {TEXTURE_METAL_1_SPEC,
+                new TextureResourceFromMemory(2, 16, 5, INTEGER, REPEAT, metal_spec_png, &metal_spec_png_len)},
+
+        {TEXTURE_MARBLE_1_DIFF,
+                new TextureResourceFromMemory(4, 16, 0, INTEGER, REPEAT, marble_diff_png, &marble_diff_png_len)},
+        {TEXTURE_MARBLE_1_NORM,
+                new TextureResourceFromMemory(4, 16, 1, INTEGER, REPEAT, marble_norm_png, &marble_norm_png_len)},
+        {TEXTURE_MARBLE_1_AO,
+                new TextureResourceFromMemory(2, 16, 2, INTEGER, REPEAT, marble_ao_png, &marble_ao_png_len)},
+        {TEXTURE_MARBLE_1_ROUGH,
+                new TextureResourceFromMemory(2, 16, 3, INTEGER, REPEAT, marble_rough_png, &marble_rough_png_len)},
+        {TEXTURE_MARBLE_1_DISP,
+                new TextureResourceFromMemory(2, 16, 4, INTEGER, REPEAT, marble_disp_png, &marble_disp_png_len)},
+        {TEXTURE_MARBLE_1_SPEC,
+                new TextureResourceFromMemory(2, 16, 5, INTEGER, REPEAT, marble_spec_png, &marble_spec_png_len)},
+
+        {TEXTURE_DENIM_1_DIFF,
+                new TextureResourceFromMemory(4, 16, 0, INTEGER, REPEAT, denim_diff_png, &denim_diff_png_len)},
+        {TEXTURE_DENIM_1_NORM,
+                new TextureResourceFromMemory(4, 16, 1, INTEGER, REPEAT, denim_norm_png, &denim_norm_png_len)},
+        {TEXTURE_DENIM_1_AO,
+                new TextureResourceFromMemory(2, 16, 2, INTEGER, REPEAT, denim_ao_png, &denim_ao_png_len)},
+        {TEXTURE_DENIM_1_ROUGH,
+                new TextureResourceFromMemory(2, 16, 3, INTEGER, REPEAT, denim_rough_png, &denim_rough_png_len)},
+        {TEXTURE_DENIM_1_DISP,
+                new TextureResourceFromMemory(2, 16, 4, INTEGER, REPEAT, denim_disp_png, &denim_disp_png_len)}
 };
 
 int32_t TextureManager::create_item(Texture **item, uint32_t id)

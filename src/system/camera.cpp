@@ -7,8 +7,7 @@ Camera::Camera(
 {
     target = {0, 0, 0};
     angles = {0, 0, 0};
-    angles[0] = -0.25f * M_PI;
-    zoom_level = 2.0f;
+    zoom_level = 6.0f;
 }
 
 int Camera::add_zoom(float zoom_increment)
@@ -24,7 +23,7 @@ glm::mat4 Camera::get_view_matrix()
     return glm::lookAt(get_camera_position(), target, UP);
 }
 
-glm::mat4 Camera::get_proj_matrix()
+glm::mat4 Camera::get_proj_matrix() const
 {
     return glm::perspective(fov, aspect_ratio, near_clipping_dist, far_clipping_dist);
 }

@@ -63,11 +63,12 @@ void update(Camera *camera, Renderer *renderer, Scene *scene)
     }
 
     if (window::get_instance().get_input_handler()->get_key_state(input::NUM_1, input::PRESSED)) {
-        renderer->switch_skybox(CUBEMAP_CAYLEY_INTERIOR, CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE);
+        renderer->switch_skybox(CUBEMAP_CAYLEY_INTERIOR, CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE,
+                                CUBEMAP_CAYLEY_INTERIOR_PRE_FILTER);
     }
 
     if (window::get_instance().get_input_handler()->get_key_state(input::NUM_2, input::PRESSED)) {
-        renderer->switch_skybox(CUBEMAP_STUDIO, CUBEMAP_STUDIO_IRRADIANCE);
+        renderer->switch_skybox(CUBEMAP_STUDIO, CUBEMAP_STUDIO_IRRADIANCE, CUBEMAP_STUDIO_PRE_FILTER);
     }
 
     // update camera zoom

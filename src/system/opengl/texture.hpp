@@ -2,6 +2,8 @@
 #define SYSTEM_TEXTURE_HPP
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include "../manager/texture_manager.hpp"
 
 class Texture {
@@ -25,11 +27,21 @@ public:
             uint32_t channel_count, uint32_t bit_depth, uint32_t texture_unit, TextureManager::ChannelType channel_type,
             TextureManager::WrapType wrap_type);
 
+    /** Creates a {GL_TEXTURE2D} which is a 2D LUT for the BRDF equations used. */
+    static int create_tex_from_tex(Texture *tex, Texture *resource_tex, uint32_t texture_unit);
+
+    /** Projection and view matrices for capturing data onto the 6 cubemap face directions. */
+    static const glm::mat4 CAPTURE_PROJECTION;
+    static const glm::mat4 CAPTURE_VIEWS[];
+
     /** Creates a {GL_TEXTURE_CUBE_MAP} from {resource_tex}. */
     static int create_cubemap_from_tex(Texture *tex, Texture *resource_tex, uint32_t texture_unit);
 
     /** Creates a {GL_TEXTURE_CUBE_MAP} which is the irradiance calculated from {resource_tex}. */
     static int create_irradiance_cubemap_from_cubemap(Texture *tex, Texture *resource_tex, uint32_t texture_unit);
+
+    /** Creates a {GL_TEXTURE_CUBE_MAP} which is the pre-filter calculated from {resource_tex}. */
+    static int create_pre_filtered_cubemap_from_cubemap(Texture *tex, Texture *resource_tex, uint32_t texture_unit);
 
     static void bind_tex(Texture *tex);
 

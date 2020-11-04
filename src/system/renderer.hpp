@@ -21,6 +21,7 @@ private:
 
     TextureType cubemap = CUBEMAP_CAYLEY_INTERIOR;
     TextureType cubemap_irradiance = CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE;
+    TextureType cubemap_pre_filter = CUBEMAP_CAYLEY_INTERIOR_PRE_FILTER;
 
     /** Whether the coordinate system should be drawn. */
     bool debug_mode = false;
@@ -45,7 +46,8 @@ public:
 
     void render_lines(uint32_t primitive_id, glm::mat4 model_matrix);
 
-    void switch_skybox(TextureType p_cubemap, TextureType p_cubemap_irradiance);
+    void switch_skybox(
+            TextureType p_cubemap, TextureType p_cubemap_irradiance, TextureType p_cubemap_pre_filter);
 
 private:
     const float WIDGET_CONE_BASE_RADIUS = .03f;

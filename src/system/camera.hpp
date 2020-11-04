@@ -20,7 +20,7 @@ private:
     constexpr static const float MIN_ZOOM = 0.1f;
 
     float aspect_ratio;
-    float fov;                // vertical field of view
+    float fov;          // vertical field of view
 
 public:
     /** Target location around which this camera orbits. */
@@ -43,7 +43,7 @@ public:
     glm::mat4 get_view_matrix();
 
     /** Constructs and returns the projection matrix for this camera. */
-    glm::mat4 get_proj_matrix();
+    glm::mat4 get_proj_matrix() const;
 
     glm::vec3 get_camera_position();
 

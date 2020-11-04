@@ -15,6 +15,8 @@ enum ShaderType {
     SHADER_EQUIRECTANGULAR_MAP,
     SHADER_SKYBOX,
     SHADER_IRRADIANCE_MAP,
+    SHADER_PRE_FILTER_MAP,
+    SHADER_BRDF
 };
 
 class ShaderManager : public Manager<ShaderProgram> {

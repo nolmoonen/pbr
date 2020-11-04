@@ -13,6 +13,8 @@ const std::map<uint32_t, ShaderManager::ShaderResource> ShaderManager::SHADER_PR
         {SHADER_EQUIRECTANGULAR_MAP, {equirectangular_map_vert, &equirectangular_map_vert_len, equirectangular_map_frag, &equirectangular_map_frag_len}},
         {SHADER_SKYBOX,              {skybox_vert,              &skybox_vert_len,              skybox_frag,              &skybox_frag_len}},
         {SHADER_IRRADIANCE_MAP,      {irradiance_map_vert,      &irradiance_map_vert_len,      irradiance_map_frag,      &irradiance_map_frag_len}},
+        {SHADER_PRE_FILTER_MAP,      {pre_filter_map_vert,      &pre_filter_map_vert_len,      pre_filter_map_frag,      &pre_filter_map_frag_len}},
+        {SHADER_BRDF,                {brdf_vert,                &brdf_vert_len,                brdf_frag,                &brdf_frag_len}},
 };
 
 int32_t ShaderManager::create_item(ShaderProgram **item, uint32_t id)

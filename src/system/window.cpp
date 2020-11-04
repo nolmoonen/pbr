@@ -50,6 +50,7 @@ int32_t window::initialize()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glEnable(GL_MULTISAMPLE);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS); // sample across faces of cubemap
 
     glDepthFunc(GL_LEQUAL); // needed for cubemapped skybox
 

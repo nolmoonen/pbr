@@ -20,7 +20,7 @@ private:
     constexpr static const float MIN_ZOOM = 0.1f;
 
     float aspect_ratio;
-    float fov;          // vertical field of view
+    float fov;          // vertical field of view (radians!)
 
 public:
     /** Target location around which this camera orbits. */

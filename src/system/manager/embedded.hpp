@@ -139,4 +139,10 @@ extern const size_t cayley_interior_hdr_len;
 extern const char studio_hdr[];
 extern const size_t studio_hdr_len;
 
+extern const char moonless_golf_hdr[];
+extern const size_t moonless_golf_hdr_len;
+
+extern const char noon_grass_hdr[];
+extern const size_t noon_grass_hdr_len;
+
 #endif //SYSTEM_EMBEDDED_HPP

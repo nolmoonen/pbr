@@ -23,9 +23,21 @@ public:
      * but the alternative is a pointer to the selected object, which may go invalid.*/
     bool has_selection = false;
 
+    bool scene_one = true;
+
     explicit Scene(Renderer *renderer);
 
     virtual ~Scene();
+
+    void erase();
+
+    /** Scene with four spheres. */
+    void construct();
+
+    /** Scene with one high detail sphere and lights. */
+    void construct_other();
+
+    void switch_scene();
 
     void render(bool debug_mode);
 

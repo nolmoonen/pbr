@@ -2,6 +2,10 @@
 
 #include <glm/mat4x4.hpp>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+
+#include <stb_image_write.h>
+
 #include "system/window.hpp"
 #include "system/camera.hpp"
 #include "system/renderer.hpp"
@@ -62,13 +66,40 @@ void update(Camera *camera, Renderer *renderer, Scene *scene)
         window::get_instance().set_to_close();
     }
 
+    // environment switching
     if (window::get_instance().get_input_handler()->get_key_state(input::NUM_1, input::PRESSED)) {
-        renderer->switch_skybox(CUBEMAP_CAYLEY_INTERIOR, CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE,
-                                CUBEMAP_CAYLEY_INTERIOR_PRE_FILTER);
+        renderer->switch_skybox(
+                CUBEMAP_NOON_GRASS, CUBEMAP_NOON_GRASS_IRRADIANCE, CUBEMAP_NOON_GRASS_PRE_FILTER);
     }
 
     if (window::get_instance().get_input_handler()->get_key_state(input::NUM_2, input::PRESSED)) {
-        renderer->switch_skybox(CUBEMAP_STUDIO, CUBEMAP_STUDIO_IRRADIANCE, CUBEMAP_STUDIO_PRE_FILTER);
+        renderer->switch_skybox(
+                CUBEMAP_STUDIO, CUBEMAP_STUDIO_IRRADIANCE, CUBEMAP_STUDIO_PRE_FILTER);
+    }
+
+    if (window::get_instance().get_input_handler()->get_key_state(input::NUM_3, input::PRESSED)) {
+        renderer->switch_skybox(
+                CUBEMAP_MOONLESS_GOLF, CUBEMAP_MOONLESS_GOLF_IRRADIANCE, CUBEMAP_MOONLESS_GOLF_PRE_FILTER);
+    }
+
+    // scene switching
+    if (window::get_instance().get_input_handler()->get_key_state(input::F1, input::PRESSED) ||
+        window::get_instance().get_input_handler()->get_key_state(input::F2, input::PRESSED)) {
+        scene->switch_scene();
+    }
+
+    if (window::get_instance().get_input_handler()->get_key_state(input::P, input::PRESSED)) {
+        uint32_t x = window::get_instance().get_input_handler()->get_size_x();
+        uint32_t y = window::get_instance().get_input_handler()->get_size_y();
+
+        auto *buffer = new uint8_t[x * y * 3]; // rgb
+        glReadPixels(0, 0, x, y, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+
+        stbi_flip_vertically_on_write(1);
+        stbi_write_png("out.png", x, y, 3, buffer, (signed) x * 3);
+        delete[] buffer;
+
+        nm_log::log(LOG_INFO, "written framebuffer to \"out.png\"\n");
     }
 
     // update camera zoom
@@ -180,6 +211,7 @@ void update(Camera *camera, Renderer *renderer, Scene *scene)
         }
     }
 
+    // scene object translation
     if (dragging_widget) {
         const float SENSITIVITY = .08f;
         double x_offset = window::get_instance().get_input_handler()->get_offset_xpos();

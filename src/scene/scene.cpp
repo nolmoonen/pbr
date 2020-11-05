@@ -3,6 +3,72 @@
 #include "sphere.hpp"
 #include "../system/renderer.hpp"
 
+Scene::Scene(
+        Renderer *renderer
+) :
+        renderer(renderer)
+{
+    construct();
+}
+
+Scene::~Scene()
+{
+    for (auto &object : objects) {
+        delete object;
+    }
+}
+
+void Scene::erase()
+{
+    for (auto &object : objects) {
+        delete object;
+    }
+    objects.clear();
+}
+
+void Scene::construct()
+{
+    objects.emplace_back(
+            (SceneObject *) new Sphere(this, renderer, glm::vec3(-3.f, 0.f, 0.f), Material::MATERIAL_BRICK_1K));
+    objects.emplace_back(
+            (SceneObject *) new Sphere(this, renderer, glm::vec3(-1.f, 0.f, 0.f), Material::MATERIAL_METAL_1K));
+    objects.emplace_back(
+            (SceneObject *) new Sphere(this, renderer, glm::vec3(+1.f, 0.f, 0.f), Material::MATERIAL_DENIM_1K));
+    objects.emplace_back(
+            (SceneObject *) new Sphere(this, renderer, glm::vec3(+3.f, 0.f, 0.f), Material::MATERIAL_MARBLE_1K));
+
+    // little bit awkward, but having Light a child of SceneObject allows for nice code elsewhere
+    for (auto &light : lights) {
+        objects.emplace_back(light);
+    }
+}
+
+void Scene::construct_other()
+{
+    objects.emplace_back(
+            (SceneObject *) new Sphere(this, renderer, glm::vec3(0.f), Material::MATERIAL_BRICK_4K));
+    lights.emplace_back(new Light(this, renderer, glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 0.f, 0.f)));
+    lights.emplace_back(new Light(this, renderer, glm::vec3(-1.f, 1.f, +1.f), glm::vec3(0.f, 1.f, 0.f)));
+    lights.emplace_back(new Light(this, renderer, glm::vec3(+1.f, 1.f, -1.f), glm::vec3(0.f, 0.f, 1.f)));
+    lights.emplace_back(new Light(this, renderer, glm::vec3(+1.f, 1.f, +1.f), glm::vec3(1.f, 1.f, 1.f)));
+
+    // little bit awkward, but having Light a child of SceneObject allows for nice code elsewhere
+    for (auto &light : lights) {
+        objects.emplace_back(light);
+    }
+}
+
+void Scene::switch_scene()
+{
+    erase();
+    if (scene_one) {
+        construct_other();
+    } else {
+        construct();
+    }
+    scene_one = !scene_one;
+}
+
 void Scene::render(bool debug_mode)
 {
     // draw all objects
@@ -23,41 +89,9 @@ void Scene::render(bool debug_mode)
     }
 }
 
-Scene::Scene(
-        Renderer *renderer
-) :
-        renderer(renderer)
-{
-    objects.emplace_back(
-            (SceneObject *) new Sphere(this, renderer, glm::vec3(-3.f, 0.f, 0.f), Material::MATERIAL_BRICK_1K));
-    objects.emplace_back(
-            (SceneObject *) new Sphere(this, renderer, glm::vec3(-1.f, 0.f, 0.f), Material::MATERIAL_METAL_1K));
-    objects.emplace_back(
-            (SceneObject *) new Sphere(this, renderer, glm::vec3(+1.f, 0.f, 0.f), Material::MATERIAL_DENIM_1K));
-    objects.emplace_back(
-            (SceneObject *) new Sphere(this, renderer, glm::vec3(+3.f, 0.f, 0.f), Material::MATERIAL_MARBLE_1K));
-//    lights.emplace_back(new Light(this, renderer, glm::vec3(-1.f, 1.f, -1.f), glm::vec3(1.f, 0.f, 0.f)));
-//    lights.emplace_back(new Light(this, renderer, glm::vec3(-1.f, 1.f, +1.f), glm::vec3(0.f, 1.f, 0.f)));
-//    lights.emplace_back(new Light(this, renderer, glm::vec3(+1.f, 1.f, -1.f), glm::vec3(0.f, 0.f, 1.f)));
-//    lights.emplace_back(new Light(this, renderer, glm::vec3(+1.f, 1.f, +1.f), glm::vec3(1.f, 1.f, 1.f)));
-    lights.emplace_back(new Light(this, renderer, glm::vec3(0.f, 3.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
-
-    // little bit awkward, but having Light a child of SceneObject allows for nice code elsewhere
-    for (auto &light : lights) {
-        objects.emplace_back(light);
-    }
-}
-
 void Scene::update()
 {
     // todo?
-}
-
-Scene::~Scene()
-{
-    for (auto &object : objects) {
-        delete object;
-    }
 }
 
 void Scene::cast_ray(glm::vec3 origin, glm::vec3 direction)

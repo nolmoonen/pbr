@@ -19,9 +19,9 @@ private:
     TextureManager *texture_manager;
     PrimitiveManager *primitive_manager;
 
-    TextureType cubemap = CUBEMAP_CAYLEY_INTERIOR;
-    TextureType cubemap_irradiance = CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE;
-    TextureType cubemap_pre_filter = CUBEMAP_CAYLEY_INTERIOR_PRE_FILTER;
+    TextureType cubemap = CUBEMAP_NOON_GRASS;
+    TextureType cubemap_irradiance = CUBEMAP_NOON_GRASS_IRRADIANCE;
+    TextureType cubemap_pre_filter = CUBEMAP_NOON_GRASS_PRE_FILTER;
 
     /** Whether the coordinate system should be drawn. */
     bool debug_mode = false;

@@ -2,12 +2,13 @@
 
 Camera::Camera(
         float p_aspect_ratio, float p_fov, float p_near_clipping_dist, float p_far_clipping_dist
-) : aspect_ratio(p_aspect_ratio), fov(p_fov), near_clipping_dist(p_near_clipping_dist),
-    far_clipping_dist(p_far_clipping_dist)
+) :
+        aspect_ratio(p_aspect_ratio), fov(p_fov), near_clipping_dist(p_near_clipping_dist),
+        far_clipping_dist(p_far_clipping_dist)
 {
-    target = {0, 0, 0};
-    angles = {0, 0, 0};
-    zoom_level = 6.0f;
+    target = glm::vec3(0.f);
+    angles = glm::vec3(0.f);
+    zoom_level = 5.0f;
 }
 
 int Camera::add_zoom(float zoom_increment)

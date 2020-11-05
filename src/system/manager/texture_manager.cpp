@@ -68,19 +68,6 @@ const std::map<uint32_t, TextureManager::TextureResource *> TextureManager::TEXT
                 new TextureResourceFromTextureResource( // NB: TextureType parameter is NOT used!
                         TEXTURE_TEST, 8, &Texture::create_tex_from_tex)},
 
-        {TEXTURE_CAYLEY_INTERIOR_HDR,
-                new TextureResourceFromMemory(
-                        3, 32, 0, FLOATING_POINT, CLAMP, cayley_interior_hdr, &cayley_interior_hdr_len)},
-        {CUBEMAP_CAYLEY_INTERIOR,
-                new TextureResourceFromTextureResource(
-                        TEXTURE_CAYLEY_INTERIOR_HDR, 0, &Texture::create_cubemap_from_tex)},
-        {CUBEMAP_CAYLEY_INTERIOR_IRRADIANCE,
-                new TextureResourceFromTextureResource(
-                        CUBEMAP_CAYLEY_INTERIOR, 6, &Texture::create_irradiance_cubemap_from_cubemap)},
-        {CUBEMAP_CAYLEY_INTERIOR_PRE_FILTER,
-                new TextureResourceFromTextureResource(
-                        CUBEMAP_CAYLEY_INTERIOR, 7, &Texture::create_pre_filtered_cubemap_from_cubemap)},
-
         {TEXTURE_STUDIO_HDR,
                 new TextureResourceFromMemory(
                         3, 32, 0, FLOATING_POINT, CLAMP, studio_hdr, &studio_hdr_len)},
@@ -93,6 +80,32 @@ const std::map<uint32_t, TextureManager::TextureResource *> TextureManager::TEXT
         {CUBEMAP_STUDIO_PRE_FILTER,
                 new TextureResourceFromTextureResource(
                         CUBEMAP_STUDIO, 7, &Texture::create_pre_filtered_cubemap_from_cubemap)},
+
+        {TEXTURE_MOONLESS_GOLF_HDR,
+                new TextureResourceFromMemory(
+                        3, 32, 0, FLOATING_POINT, CLAMP, moonless_golf_hdr, &moonless_golf_hdr_len)},
+        {CUBEMAP_MOONLESS_GOLF,
+                new TextureResourceFromTextureResource(
+                        TEXTURE_MOONLESS_GOLF_HDR, 0, &Texture::create_cubemap_from_tex)},
+        {CUBEMAP_MOONLESS_GOLF_IRRADIANCE,
+                new TextureResourceFromTextureResource(
+                        CUBEMAP_MOONLESS_GOLF, 6, &Texture::create_irradiance_cubemap_from_cubemap)},
+        {CUBEMAP_MOONLESS_GOLF_PRE_FILTER,
+                new TextureResourceFromTextureResource(
+                        CUBEMAP_MOONLESS_GOLF, 7, &Texture::create_pre_filtered_cubemap_from_cubemap)},
+
+        {TEXTURE_NOON_GRASS_HDR,
+                new TextureResourceFromMemory(
+                        3, 32, 0, FLOATING_POINT, CLAMP, noon_grass_hdr, &noon_grass_hdr_len)},
+        {CUBEMAP_NOON_GRASS,
+                new TextureResourceFromTextureResource(
+                        TEXTURE_NOON_GRASS_HDR, 0, &Texture::create_cubemap_from_tex)},
+        {CUBEMAP_NOON_GRASS_IRRADIANCE,
+                new TextureResourceFromTextureResource(
+                        CUBEMAP_NOON_GRASS, 6, &Texture::create_irradiance_cubemap_from_cubemap)},
+        {CUBEMAP_NOON_GRASS_PRE_FILTER,
+                new TextureResourceFromTextureResource(
+                        CUBEMAP_NOON_GRASS, 7, &Texture::create_pre_filtered_cubemap_from_cubemap)},
 
         {TEXTURE_BRICK_1_DIFF,
                 new TextureResourceFromMemory(4, 16, 0, INTEGER, REPEAT, brick_diff_png, &brick_diff_png_len)},
@@ -107,54 +120,54 @@ const std::map<uint32_t, TextureManager::TextureResource *> TextureManager::TEXT
 
         {TEXTURE_BRICK_2_DIFF,
                 new TextureResourceFromFile(4, 16, 0, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_diff_2k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_diff_2k.png")},
         {TEXTURE_BRICK_2_NORM,
                 new TextureResourceFromFile(4, 16, 1, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_nor_2k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_nor_2k.png")},
         {TEXTURE_BRICK_2_AO,
                 new TextureResourceFromFile(4, 16, 2, INTEGER,
                                             REPEAT, // NB: intentional difference with {TEXTURE_BRICK_AO}
-                                            "../res/tex/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_ao_2k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_ao_2k.png")},
         {TEXTURE_BRICK_2_ROUGH,
                 new TextureResourceFromFile(2, 16, 3, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_rough_2k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_rough_2k.png")},
         {TEXTURE_BRICK_2_DISP,
                 new TextureResourceFromFile(2, 16, 4, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_disp_2k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_2k_png/castle_brick_07_disp_2k.png")},
 
         {TEXTURE_BRICK_4_DIFF,
                 new TextureResourceFromFile(4, 16, 0, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_diff_4k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_diff_4k.png")},
         {TEXTURE_BRICK_4_NORM,
                 new TextureResourceFromFile(4, 16, 1, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_nor_4k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_nor_4k.png")},
         {TEXTURE_BRICK_4_AO,
                 new TextureResourceFromFile(4, 16, 2, INTEGER,
                                             REPEAT, // NB: intentional difference with {TEXTURE_BRICK_AO}
-                                            "../res/tex/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_ao_4k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_ao_4k.png")},
         {TEXTURE_BRICK_4_ROUGH,
                 new TextureResourceFromFile(2, 16, 3, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_rough_4k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_rough_4k.png")},
         {TEXTURE_BRICK_4_DISP,
                 new TextureResourceFromFile(2, 16, 4, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_disp_4k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_4k_png/castle_brick_07_disp_4k.png")},
 
         {TEXTURE_BRICK_8_DIFF,
                 new TextureResourceFromFile(4, 16, 0, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_diff_8k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_diff_8k.png")},
         {TEXTURE_BRICK_8_NORM,
                 new TextureResourceFromFile(4, 16, 1, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_nor_8k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_nor_8k.png")},
         {TEXTURE_BRICK_8_AO,
                 new TextureResourceFromFile(4, 16, 2, INTEGER,
                                             REPEAT, // NB: intentional difference with {TEXTURE_BRICK_AO}
-                                            "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_ao_8k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_ao_8k.png")},
         {TEXTURE_BRICK_8_ROUGH,
                 new TextureResourceFromFile(2, 16, 3, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_rough_8k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_rough_8k.png")},
         {TEXTURE_BRICK_8_DISP,
                 new TextureResourceFromFile(2, 16, 4, INTEGER, REPEAT,
-                                            "../res/tex/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_disp_8k.png")},
+                                            "../res/tex/pbr/castle_brick_07/castle_brick_07_8k_png/castle_brick_07_disp_8k.png")},
 
         {TEXTURE_METAL_1_DIFF,
                 new TextureResourceFromMemory(4, 16, 0, INTEGER, REPEAT, metal_diff_png, &metal_diff_png_len)},

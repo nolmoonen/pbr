@@ -493,7 +493,7 @@ Primitive *FullPrimitive::create_sphere()
 
     /** create indices */
 
-    const uint32_t INDEX_COUNT = STACK_COUNT * (SECTOR_COUNT - 2) * 6;
+    const uint32_t INDEX_COUNT = (STACK_COUNT * SECTOR_COUNT * 6) - SECTOR_COUNT * 3 * 2;
     GLushort indices[INDEX_COUNT];
 
     uint32_t index = 0; // index index

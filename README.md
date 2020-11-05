@@ -9,8 +9,7 @@
 todo
 
 #### Future improvements
-*   Texture streaming
-*   Fix sphere mesh (release vs debug)
+*   Texture streaming: load higher quality textures on a separate thread.
 *   Generate cubemap, irradiance cubemap, pre-filter cubemap, and BRDF LUT at compile time rather than run time.
 
 #### Image credit

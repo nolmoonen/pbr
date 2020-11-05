@@ -2,6 +2,17 @@
 ![studio](doc/studio.png)
 ![night](doc/night.png)
 
+`pbr` is an implementation of a real-time Physically Based Rendering (PBR) pipeline based on the tutorials of 
+[LearnOpenGL](https://learnopengl.com/). PBR materials consisting of an ambient occlusion map, a diffuse texture, a 
+displacement map, a normal map, a roughness map, and optionally a specular map are supported. These textures are used to 
+render meshes in a way grounded in physics, where all light comes from point lights. Meshes are normal mapped and 
+displacement mapped, these effects can be seen in the image below. Image Based Lighting is implemented where the skybox 
+is sampled to precompute diffuse and specular contributions from the rendering equation. In this way, not only the 
+contributions of the point lights are counted but also of the environment. These effects can be seen in the images 
+above.
+
+![detail](doc/detail.png)
+
 #### Building
 *   Clone [GLFW 3.3.2](https://github.com/glfw/glfw/releases/tag/3.3.2) into directory `external/glfw-3.3.1`.
 *   Clone [glad v0.1.33](https://github.com/Dav1dde/glad/releases/tag/v0.1.33) into directory `external/glad-0.1.33`.
